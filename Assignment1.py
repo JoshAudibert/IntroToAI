@@ -269,7 +269,7 @@ def runSearch():
             expandNode(frontier[0], frontier)
         
 def main():
-    parseInput('assignment 1, sample board.txt')
+    parseInput('Test 1.txt')
     moveList = runSearch()
     print("Soln:")
     print(moveList)

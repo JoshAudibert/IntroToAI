@@ -120,8 +120,8 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 (node.coords[0], node.coords[1] - 2),
                 'N',
                 node.moveSeq + ['B', 'F'],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]] + getHeuristic((node.coords[0], node.coords[1] - 2), map_info)))
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2],
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2] + getHeuristic((node.coords[0], node.coords[1] - 2), map_info)))
     elif node.heading == 'E':
         # turn right
         neighboringStates.append(SearchState(
@@ -257,7 +257,7 @@ def runSearch(map_info):
             expandNode(frontier[0], frontier, expandedStates, map_info)
         
 def main():
-    map_info = parseInput('assignment 1, sample board.txt')
+    map_info = parseInput('Test 1.txt')
     moveList = runSearch(map_info)
     print("Soln:")
     print(moveList)

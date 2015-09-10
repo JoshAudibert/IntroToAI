@@ -69,14 +69,22 @@ def getHeuristic(coords, map_info):
     
     # use if statements to determine which heuristic to apply
     # return heuristic value for the input coordinates
+    horizonstal = abs(map_info.goalCoords[0] - coords[0])
+    vertical = abs(map_info.goalCoords[1] - coords[1])
+
     if selHeuristic == 1:
         return 0
     elif selHeuristic == 2:
-        return min(abs(map_info.goalCoords[0] - coords[0]), abs(map_info.goalCoords[1] - coords[1]))
+        return min(horizonstal, vertical)
+    elif selHeuristic == 3:
+        return max(horizonstal, vertical)
+    elif selHeuristic == 4:
+        return horizonstal + vertical
+    elif selHeuristic == 5:
+        return (horizonstal + vertical) + (horizonstal != 0) + (vertical != 0)
     else:
-        pass
-        
-    pass
+        return 3*((horizonstal + vertical) + (horizonstal != 0) + (vertical != 0))
+
         
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
@@ -256,7 +264,7 @@ def runSearch(map_info):
         
 def main():
     global selHeuristic # which heuristic function to use
-    numHeuristicsDone = 2
+    numHeuristicsDone = 6
     # loop over tests
     solutions = [['B', 'F', 'L', 'B', 'F'],
                  ['L', 'B', 'F', 'R', 'B', 'F', 'F'],

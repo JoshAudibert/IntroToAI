@@ -12,9 +12,16 @@ class SearchState:
         self.score = score
         
     def __eq__(self, other):
-        return self.coords == other.coords and self.heading == other.heading
+        return (self.coords == other.coords and self.heading == other.heading)
     def __ne__(self, other):
-        return self.coords != other.coords or self.heading != other.heading
+        return (self.coords != other.coords or self.heading != other.heading)
+    def __cmp__(self, other):
+        if (self.coords == other.coords and self.heading == other.heading):
+            return 0
+        else:
+            return -1
+    def __hash__(self):
+        return str(self.coords) + str(heading)
 
 
 class MapInfo:
@@ -69,31 +76,29 @@ def getHeuristic(coords, map_info):
     
     # use if statements to determine which heuristic to apply
     # return heuristic value for the input coordinates
-    horizonstal = abs(map_info.goalCoords[0] - coords[0])
+    horizontal = abs(map_info.goalCoords[0] - coords[0])
     vertical = abs(map_info.goalCoords[1] - coords[1])
 
     if selHeuristic == 1:
         return 0
     elif selHeuristic == 2:
-        return min(horizonstal, vertical)
+        return min(horizontal, vertical)
     elif selHeuristic == 3:
-        return max(horizonstal, vertical)
+        return max(horizontal, vertical)
     elif selHeuristic == 4:
-        return horizonstal + vertical
+        return horizontal + vertical
     elif selHeuristic == 5:
-        return (horizonstal + vertical) + (horizonstal != 0) + (vertical != 0)
+        return (horizontal + vertical) + (horizontal != 0) + (vertical != 0)
     else:
-        return 3*((horizonstal + vertical) + (horizonstal != 0) + (vertical != 0))
+        return 3*((horizontal + vertical) + (horizontal != 0) + (vertical != 0))
 
         
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
+    if node in expandedStates:
+        #print "Already expanded node: " + str(node.coords) + ", " + str(node.heading)
+        return
     expandedStates.append(node)
-    # print "Node:"
-    # print node.moveSeq
-    # print node.coords
-    # print node.heading
-    # print node.seqCost
 
     # calculate all states 1 move away 
     neighboringStates = []
@@ -105,6 +110,8 @@ def expandNode(node, frontierList, expandedStates, map_info):
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+        #print "*******" + str(getHeuristic(node.coords, map_info))
+        #print "*******" + str(ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
@@ -224,47 +231,41 @@ def expandNode(node, frontierList, expandedStates, map_info):
     
     # add unique neighbors and neighbors with lower cost to frontier
     # implementation depends on in, index, and remove functions using the __eq__ defined for state, not sure if they do
-    num_new_nodes = 0
+    #print "Current node: " + str(node.coords) + ", " + str(node.heading)
+    #print str(len(neighboringStates)) + " neigbering states:"
     for state in neighboringStates:
-        if state in expandedStates:
-            try:
-                stateIndex = expandedStates.index(state)
-                if state.seqCost < expandedStates[stateIndex].seqCost:
-                    expandedStates.remove(state)
-                    expandedStates.append(state)
-                    frontierList.append(state)  
-                    num_new_nodes += 1                
-            except:
-                print "state index not found"
-            pass
-        else:
-            frontierList.append(state)
-            num_new_nodes += 1
-    map_info.eff_branching_factor[0] = ((map_info.eff_branching_factor[0]*map_info.eff_branching_factor[1])
-                                        + num_new_nodes)/(map_info.eff_branching_factor[1]+1)
-    map_info.eff_branching_factor[1] += 1
-            
+        #print "\t" + str(state.coords) + ", " + str(state.heading) + ", " + str(state.score)
+        if state not in expandedStates:
+        #if not [state.coords, state.heading] in [[s.coords, s.heading] for s in expandedStates]:
+            if state not in frontierList:
+                #print "new state"
+                frontierList.append(state)
+            else:
+                #print "duplicate in Frontier"
+                stateIndex = frontierList.index(state)
+                if state.score < frontierList[stateIndex].score:
+                    #print "set old to new: score from " + str(frontierList[stateIndex].score) + " --> " + str(state.score)
+                    frontierList[stateIndex] = state    
     # sort frontierList by score (cost + heuristic)
     frontierList.sort(key=lambda state: state.score)
-    pass
+    #print "\n"
         
 def runSearch(map_info):
-    frontier = list()
-    expandedStates = list()
-    frontier.append(SearchState(map_info.startCoords, 'N', list(), 0, getHeuristic(map_info.startCoords, map_info)))
+    frontier = []
+    expandedStates = []
+    frontier.append(SearchState(map_info.startCoords, 'N', [], 0, getHeuristic(map_info.startCoords, map_info)))
     solnFound = False
     while solnFound == False:
         if frontier[0].coords == map_info.goalCoords:
             solnFound = True
             return (frontier[0], len(expandedStates))
-            #return frontier[0].moveSeq
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
 
-sys.argv = ["astar.py", "Test 4.txt", 1]
+sys.argv = ["astar.py", "Test 6.txt", 1]
         
 def main():
-    testing = True
+    testing = False
     if not testing:
         filename = sys.argv[1]
 
@@ -291,9 +292,8 @@ def main():
                 selHeuristic = i
                 map_info = parseInput('Test ' + str(j) + '.txt')
                 finalState, numExpanded = runSearch(map_info)
-                #print(finalState.moveSeq == solutions[j-1])
-                print("Test " + str(j) + ", Heuristic #" + str(i) + "\t" + 
-                    "Effective branching factor:\t" + str(map_info.eff_branching_factor[0]))
+                print("Test " + str(j) + ", Heuristic #" + str(i))
+                print(finalState.moveSeq == solutions[j-1])
             print("\n")
     
 if __name__ == "__main__":

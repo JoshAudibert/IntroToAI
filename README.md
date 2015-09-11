@@ -1,5 +1,8 @@
 # IntroToAI
 
+NOTE: Python 2.7 was used to write and run this program,
+	it will most likely not run with python 3
+
 The program can be run in command line by:
 
 astar.py "Test X.txt" hur_num

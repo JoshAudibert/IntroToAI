@@ -290,9 +290,11 @@ def main():
             selHeuristic = i
             for j in range(1, 6):
                 map_info = parseInput('Test ' + str(j) + '.txt')
-                moveList = runSearch(map_info)
-                print(moveList == solutions[j-1])
-                print(map_info.eff_branching_factor)
+                finalState, numExpanded = runSearch(map_info)
+                #print(finalState.moveSeq == solutions[j-1])
+                print("Test " + str(j) + ", Heuristic #" + str(i))
+                print("Effective branching factor/Number of nodes processed: " + str(map_info.eff_branching_factor))
+            print("\n")
     
 if __name__ == "__main__":
     main()

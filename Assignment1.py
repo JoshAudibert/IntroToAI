@@ -89,6 +89,7 @@ def getHeuristic(coords, map_info):
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
     expandedStates.append(node)
+    print selHeuristic
     # print "Node:"
     # print node.moveSeq
     # print node.coords
@@ -261,15 +262,16 @@ def runSearch(map_info):
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
 
-sys.argv = ["astar.py", "Test 4.txt", 1]
+#sys.argv = ["astar.py", "Test 4.txt", 1]
         
 def main():
-    testing = True
+    testing = False
     if not testing:
         filename = sys.argv[1]
-
+        print filename
         global selHeuristic # which heuristic function to use
         selHeuristic = sys.argv[2]
+        print selHeuristic
         map_info = parseInput(filename)
         (finalState, numExpanded) = runSearch(map_info)
         print("Score: %d" % (100 - finalState.score))

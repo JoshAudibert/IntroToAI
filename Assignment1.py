@@ -58,6 +58,8 @@ def parseInput(inputfile):
     temp = [list(i) for i in zip(*terrainMap)]
     terrainMap = temp
     
+    # NOTE: map coordinates are x,y
+    
     return MapInfo(startCoords, goalCoords, terrainMap)
 
         
@@ -66,14 +68,22 @@ def getHeuristic(coords, map_info):
     
     # use if statements to determine which heuristic to apply
     # return heuristic value for the input coordinates
+    horizonstal = abs(map_info.goalCoords[0] - coords[0])
+    vertical = abs(map_info.goalCoords[1] - coords[1])
+
     if selHeuristic == 1:
         return 0
     elif selHeuristic == 2:
-        pass
+        return min(horizonstal, vertical)
+    elif selHeuristic == 3:
+        return max(horizonstal, vertical)
+    elif selHeuristic == 4:
+        return horizonstal + vertical
+    elif selHeuristic == 5:
+        return (horizonstal + vertical) + (horizonstal != 0) + (vertical != 0)
     else:
-        pass
-        
-    pass
+        return 3*((horizonstal + vertical) + (horizonstal != 0) + (vertical != 0))
+
         
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
@@ -254,14 +264,32 @@ def runSearch(map_info):
 sys.argv = ["astar.py", "Test 4.txt", 1]
         
 def main():
-    filename = sys.argv[1]
+    testing = True 
+    if not testing:
+        filename = sys.argv[1]
 
-    global selHeuristic # which heuristic function to use
-    selHeuristic = sys.argv[2]
-    map_info = parseInput(filename)
-    moveList = runSearch(map_info)
-    print("Soln:")
-    print(moveList)
+        global selHeuristic # which heuristic function to use
+        selHeuristic = sys.argv[2]
+        map_info = parseInput(filename)
+        moveList = runSearch(map_info)
+        print("Soln:")
+        print(moveList)
+    else:
+        numHeuristicsDone = 6
+        # loop over tests
+        solutions = [['B', 'F', 'L', 'B', 'F'],
+                     ['L', 'B', 'F', 'R', 'B', 'F', 'F'],
+                     ['L', 'F', 'R', 'B', 'F', 'L', 'B', 'F', 'R', 'F'],
+                     ['L', 'F', 'B', 'F', 'R', 'F', 'F', 'R', 'F'],
+                     ['B', 'F', 'B', 'F']]
+        for i in range(1, numHeuristicsDone + 1):
+            selHeuristic = i
+            for j in range(1, 6):
+                map_info = parseInput('Test ' + str(j) + '.txt')
+                moveList = runSearch(map_info)
+                print(moveList == solutions[j-1])
+                #print("Soln:")
+                #print(moveList)
     
 if __name__ == "__main__":
     main()

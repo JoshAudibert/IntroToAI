@@ -25,6 +25,7 @@ class MapInfo:
         # x,y coordinate system
         self.height = len(terrainMap[0]) 
         self.width = len(terrainMap)
+        self.eff_branching_factor = [0.0, 0] # current average, number of nodes expanded 
 
 
 def parseInput(inputfile):
@@ -223,27 +224,25 @@ def expandNode(node, frontierList, expandedStates, map_info):
     
     # add unique neighbors and neighbors with lower cost to frontier
     # implementation depends on in, index, and remove functions using the __eq__ defined for state, not sure if they do
+    num_new_nodes = 0
     for state in neighboringStates:
         if state in expandedStates:
             try:
                 stateIndex = expandedStates.index(state)
                 if state.seqCost < expandedStates[stateIndex].seqCost:
-                    # print "replace state"
-                    # print expandedStates[stateIndex].moveSeq
-                    # print expandedStates[stateIndex].coords
-                    # print expandedStates[stateIndex].heading
-                    # print "new state"
-                    # print state.moveSeq
-                    # print state.coords
-                    # print state.heading
-                    expandedStates.remove(state) #remove the old one at stateIndex?
+                    expandedStates.remove(state)
                     expandedStates.append(state)
-                    frontierList.append(state)                  
+                    frontierList.append(state)  
+                    num_new_nodes += 1                
             except:
                 print "state index not found"
             pass
         else:
             frontierList.append(state)
+            num_new_nodes += 1
+    map_info.eff_branching_factor[0] = ((map_info.eff_branching_factor[0]*map_info.eff_branching_factor[1])
+                                        + num_new_nodes)/(map_info.eff_branching_factor[1]+1)
+    map_info.eff_branching_factor[1] += 1
             
     # sort frontierList by score (cost + heuristic)
     frontierList.sort(key=lambda state: state.score)
@@ -288,8 +287,7 @@ def main():
                 map_info = parseInput('Test ' + str(j) + '.txt')
                 moveList = runSearch(map_info)
                 print(moveList == solutions[j-1])
-                #print("Soln:")
-                #print(moveList)
+                print(map_info.eff_branching_factor)
     
 if __name__ == "__main__":
     main()

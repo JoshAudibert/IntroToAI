@@ -286,14 +286,14 @@ def main():
                      ['L', 'F', 'R', 'B', 'F', 'L', 'B', 'F', 'R', 'F'],
                      ['L', 'F', 'B', 'F', 'R', 'F', 'F', 'R', 'F'],
                      ['B', 'F', 'B', 'F']]
-        for i in range(1, numHeuristicsDone + 1):
-            selHeuristic = i
-            for j in range(1, 6):
+        for j in range(1, 6):
+            for i in range(1, numHeuristicsDone + 1):
+                selHeuristic = i
                 map_info = parseInput('Test ' + str(j) + '.txt')
                 finalState, numExpanded = runSearch(map_info)
                 #print(finalState.moveSeq == solutions[j-1])
-                print("Test " + str(j) + ", Heuristic #" + str(i))
-                print("Effective branching factor/Number of nodes processed: " + str(map_info.eff_branching_factor))
+                print("Test " + str(j) + ", Heuristic #" + str(i) + "\t" + 
+                    "Effective branching factor:\t" + str(map_info.eff_branching_factor[0]))
             print("\n")
     
 if __name__ == "__main__":

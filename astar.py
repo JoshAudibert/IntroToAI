@@ -1,6 +1,7 @@
 from math import ceil
 import sys
 
+# 
 class SearchState:
     def __init__(self, coords, heading, moveSeq, seqCost, score):
         # tuple is x,y
@@ -15,27 +16,23 @@ class SearchState:
         return (self.coords == other.coords and self.heading == other.heading)
     def __ne__(self, other):
         return (self.coords != other.coords or self.heading != other.heading)
-    def __cmp__(self, other):
-        if (self.coords == other.coords and self.heading == other.heading):
-            return 0
-        else:
-            return -1
-    def __hash__(self):
-        return str(self.coords) + str(heading)
 
-
+# 
 class MapInfo:
-    def __init__(self, startCoords, goalCoords, terrainMap):
+    def __init__(self, startCoords, goalCoords, terrainMap, selHeuristic):
         self.startCoords = startCoords
         self.goalCoords = goalCoords
         self.terrainMap = terrainMap
+        self.selHeuristic = selHeuristic
         # x,y coordinate system
         self.height = len(terrainMap[0]) 
         self.width = len(terrainMap)
-        self.eff_branching_factor = [0.0, 0] # current average, number of nodes expanded 
 
-
-def parseInput(inputfile):
+# 
+def parseInput(inputfile, selHeuristic):
+    if selHeuristic < 1 or selHeuristic > 6:
+        print("Please input a heuristic between 1 and 6 inclusive")
+        exit()
     f = open(inputfile, 'r')
     terrainMap = []
 
@@ -68,11 +65,11 @@ def parseInput(inputfile):
     
     # NOTE: map coordinates are x,y
     
-    return MapInfo(startCoords, goalCoords, terrainMap)
+    return MapInfo(startCoords, goalCoords, terrainMap, selHeuristic)
 
         
 def getHeuristic(coords, map_info):
-    global selHeuristic
+    selHeuristic = map_info.selHeuristic
     
     # use if statements to determine which heuristic to apply
     # return heuristic value for the input coordinates
@@ -96,7 +93,6 @@ def getHeuristic(coords, map_info):
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
     if node in expandedStates:
-        #print "Already expanded node: " + str(node.coords) + ", " + str(node.heading)
         return
     expandedStates.append(node)
 
@@ -110,8 +106,6 @@ def expandNode(node, frontierList, expandedStates, map_info):
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
-        #print "*******" + str(getHeuristic(node.coords, map_info))
-        #print "*******" + str(ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
@@ -231,24 +225,18 @@ def expandNode(node, frontierList, expandedStates, map_info):
     
     # add unique neighbors and neighbors with lower cost to frontier
     # implementation depends on in, index, and remove functions using the __eq__ defined for state, not sure if they do
-    #print "Current node: " + str(node.coords) + ", " + str(node.heading)
-    #print str(len(neighboringStates)) + " neigbering states:"
     for state in neighboringStates:
-        #print "\t" + str(state.coords) + ", " + str(state.heading) + ", " + str(state.score)
         if state not in expandedStates:
-        #if not [state.coords, state.heading] in [[s.coords, s.heading] for s in expandedStates]:
             if state not in frontierList:
-                #print "new state"
+                # new state
                 frontierList.append(state)
             else:
-                #print "duplicate in Frontier"
+                # duplicate in Frontier
                 stateIndex = frontierList.index(state)
                 if state.score < frontierList[stateIndex].score:
-                    #print "set old to new: score from " + str(frontierList[stateIndex].score) + " --> " + str(state.score)
                     frontierList[stateIndex] = state    
     # sort frontierList by score (cost + heuristic)
     frontierList.sort(key=lambda state: state.score)
-    #print "\n"
         
 def runSearch(map_info):
     frontier = []
@@ -261,40 +249,21 @@ def runSearch(map_info):
             return (frontier[0], len(expandedStates))
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
-
-sys.argv = ["astar.py", "Test 6.txt", 1]
         
 def main():
-    testing = False
-    if not testing:
-        filename = sys.argv[1]
-
-        global selHeuristic # which heuristic function to use
-        selHeuristic = sys.argv[2]
-        map_info = parseInput(filename)
-        (finalState, numExpanded) = runSearch(map_info)
-        print("Score: %d" % (100 - finalState.score))
-        print("Number of actions: %d" % len(finalState.moveSeq))
-        print("Nodes expanded: %d" % numExpanded)
-        print("Moves:")
-        for move in finalState.moveSeq:
-            print(move)
-    else:
-        numHeuristicsDone = 6
-        # loop over tests
-        solutions = [['B', 'F', 'L', 'B', 'F'],
-                     ['L', 'B', 'F', 'R', 'B', 'F', 'F'],
-                     ['L', 'F', 'R', 'B', 'F', 'L', 'B', 'F', 'R', 'F'],
-                     ['L', 'F', 'B', 'F', 'R', 'F', 'F', 'R', 'F'],
-                     ['B', 'F', 'B', 'F']]
-        for j in range(1, 6):
-            for i in range(1, numHeuristicsDone + 1):
-                selHeuristic = i
-                map_info = parseInput('Test ' + str(j) + '.txt')
-                finalState, numExpanded = runSearch(map_info)
-                print("Test " + str(j) + ", Heuristic #" + str(i))
-                print(finalState.moveSeq == solutions[j-1])
-            print("\n")
+    filename = sys.argv[1]
+    selHeuristic = int(sys.argv[2]) # which heuristic function to use
+    # read the input file and create the map
+    map_info = parseInput(filename, selHeuristic)
+    # run the search and save the results
+    (finalState, numExpanded) = runSearch(map_info)
+    # print results
+    print("Score: %d" % (100 - finalState.score))
+    print("Number of actions: %d" % len(finalState.moveSeq))
+    print("Nodes expanded: %d" % numExpanded)
+    print("Moves:")
+    for move in finalState.moveSeq:
+        print(move)
     
 if __name__ == "__main__":
     main()

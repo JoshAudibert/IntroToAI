@@ -1,4 +1,5 @@
 from math import ceil
+import sys
 
 class SearchState:
     def __init__(self, coords, heading, moveSeq, seqCost, score):
@@ -51,17 +52,11 @@ def parseInput(inputfile):
         currRow += 1
 
     f.close()
-    print(terrainMap)
 
     # convert to x y
     temp = []
     temp = [list(i) for i in zip(*terrainMap)]
     terrainMap = temp
-    print(terrainMap)
-    
-    # NOTE: map coordinates are x,y
-    global selHeuristic # which heuristic function to use
-    selHeuristic = 1
     
     return MapInfo(startCoords, goalCoords, terrainMap)
 
@@ -255,9 +250,15 @@ def runSearch(map_info):
             return frontier[0].moveSeq
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
+
+sys.argv = ["astar.py", "Test 4.txt", 1]
         
 def main():
-    map_info = parseInput('Test 1.txt')
+    filename = sys.argv[1]
+
+    global selHeuristic # which heuristic function to use
+    selHeuristic = sys.argv[2]
+    map_info = parseInput(filename)
     moveList = runSearch(map_info)
     print("Soln:")
     print(moveList)

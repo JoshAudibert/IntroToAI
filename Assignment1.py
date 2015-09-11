@@ -256,23 +256,28 @@ def runSearch(map_info):
     while solnFound == False:
         if frontier[0].coords == map_info.goalCoords:
             solnFound = True
-            return frontier[0].moveSeq
+            return (frontier[0], len(expandedStates))
+            #return frontier[0].moveSeq
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
 
 sys.argv = ["astar.py", "Test 4.txt", 1]
         
 def main():
-    testing = True 
+    testing = True
     if not testing:
         filename = sys.argv[1]
 
         global selHeuristic # which heuristic function to use
         selHeuristic = sys.argv[2]
         map_info = parseInput(filename)
-        moveList = runSearch(map_info)
-        print("Soln:")
-        print(moveList)
+        (finalState, numExpanded) = runSearch(map_info)
+        print("Score: %d" % (100 - finalState.score))
+        print("Number of actions: %d" % len(finalState.moveSeq))
+        print("Nodes expanded: %d" % numExpanded)
+        print("Moves:")
+        for move in finalState.moveSeq:
+            print(move)
     else:
         numHeuristicsDone = 6
         # loop over tests

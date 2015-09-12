@@ -39,7 +39,7 @@ def parseInput(inputfile, selHeuristic):
     # Get lines from input file
     rows = [str(line).strip().split('\t') for line in f]
     for r in rows:
-        terrainMap.append(list(r))
+        terrainMap.append(r)
 
     currRow = 0
     for row in terrainMap:
@@ -47,10 +47,10 @@ def parseInput(inputfile, selHeuristic):
         for i in row:
             if i == 'G':
                 terrainMap[currRow][currCol] = 1
-                goalCoords = (currCol, currRow)
+                goalCoords = [currCol, currRow]
             elif i == 'S':
                 terrainMap[currRow][currCol] = 1
-                startCoords = (currCol, currRow)
+                startCoords = [currCol, currRow]
             else:
                 terrainMap[currRow][currCol] = int(i)
             currCol += 1
@@ -59,9 +59,7 @@ def parseInput(inputfile, selHeuristic):
     f.close()
 
     # convert to x y
-    temp = []
-    temp = [list(i) for i in zip(*terrainMap)]
-    terrainMap = temp
+    terrainMap = [list(i) for i in zip(*terrainMap)]
     
     # NOTE: map coordinates are x,y
     
@@ -126,8 +124,6 @@ def getHeuristic(coords, heading, map_info):
 
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
-    if node in expandedStates:
-        return
     expandedStates.append(node)
 
     # calculate all states 1 move away 
@@ -150,7 +146,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # forward
         if node.coords[1] - 1 >= 0:
             neighboringStates.append(SearchState(
-                (node.coords[0], node.coords[1] - 1),
+                [node.coords[0], node.coords[1] - 1],
                 'N',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] - 1],
@@ -158,7 +154,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # bash
         if node.coords[1] - 2 >= 0:
             neighboringStates.append(SearchState(
-                (node.coords[0], node.coords[1] - 2),
+                [node.coords[0], node.coords[1] - 2],
                 'N',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2],
@@ -181,7 +177,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # forward
         if node.coords[0] + 1 < map_info.width:
             neighboringStates.append(SearchState(
-                (node.coords[0] + 1, node.coords[1]),
+                [node.coords[0] + 1, node.coords[1]],
                 'E',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0] + 1][node.coords[1]],
@@ -189,7 +185,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # bash
         if node.coords[0] + 2 < map_info.width:
             neighboringStates.append(SearchState(
-                (node.coords[0] + 2, node.coords[1]),
+                [node.coords[0] + 2, node.coords[1]],
                 'E',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0] + 2][node.coords[1]],
@@ -212,7 +208,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # forward
         if node.coords[1] + 1 < map_info.height:
             neighboringStates.append(SearchState(
-                (node.coords[0], node.coords[1] + 1),
+                [node.coords[0], node.coords[1] + 1],
                 'S',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] + 1],
@@ -220,7 +216,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # bash
         if node.coords[1] + 2 < map_info.height:
             neighboringStates.append(SearchState(
-                (node.coords[0], node.coords[1] + 2),
+                [node.coords[0], node.coords[1] + 2],
                 'S',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] + 2],
@@ -243,7 +239,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # forward
         if node.coords[0] - 1 >= 0:
             neighboringStates.append(SearchState(
-                (node.coords[0] - 1, node.coords[1]),
+                [node.coords[0] - 1, node.coords[1]],
                 'W',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0] - 1][node.coords[1]],
@@ -251,7 +247,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
         # bash
         if node.coords[0] - 2 >= 0:
             neighboringStates.append(SearchState(
-                (node.coords[0] - 2, node.coords[1]),
+                [node.coords[0] - 2, node.coords[1]],
                 'W',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]],
@@ -269,11 +265,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 stateIndex = frontierList.index(state)
                 if state.score < frontierList[stateIndex].score:
                     frontierList[stateIndex] = state  
-        else:
-            # duplicate in expandedStates
-            stateIndex = expandedStates.index(state)
-            if state.score < expandedStates[stateIndex].score:
-                print "****ERROR***"
+
     # sort frontierList by score (cost + heuristic)
     frontierList.sort(key=lambda state: state.score)
         
@@ -289,7 +281,7 @@ def runSearch(map_info):
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
         
-sys.argv = ['astar.py', 'Test 6.txt', 5]
+sys.argv = ['astar.py', 'Test 3.txt', 5]
 
 def main():
     filename = sys.argv[1]

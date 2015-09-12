@@ -1,34 +1,35 @@
 from math import ceil
 import sys
 
-# 
+# class that holds information for 1 node in the search tree
 class SearchState:
     def __init__(self, coords, heading, moveSeq, seqCost, score):
         # tuple is x,y
         # top left corner is 0,0
         self.coords = coords
         self.heading = heading
-        self.moveSeq = moveSeq
+        self.moveSeq = moveSeq # sequence of moves taken to get to this node
         self.seqCost = seqCost
-        self.score = score
+        self.score = score # g(s) + h(s)
         
+	# functions used for checking if a node is already in the frontier
     def __eq__(self, other):
         return (self.coords == other.coords and self.heading == other.heading)
     def __ne__(self, other):
         return (self.coords != other.coords or self.heading != other.heading)
 
-# 
+# class that holds the map information
 class MapInfo:
     def __init__(self, startCoords, goalCoords, terrainMap, selHeuristic):
         self.startCoords = startCoords
         self.goalCoords = goalCoords
-        self.terrainMap = terrainMap
-        self.selHeuristic = selHeuristic
+        self.terrainMap = terrainMap # list of lists of terrrain complexities
+        self.selHeuristic = selHeuristic # which heuristic function to apply
         # x,y coordinate system
         self.height = len(terrainMap[0]) 
         self.width = len(terrainMap)
 
-# 
+# parse the command line input, generating a MapInfo object
 def parseInput(inputfile, selHeuristic):
     if selHeuristic < 1 or selHeuristic > 6:
         print("Please input a heuristic between 1 and 6 inclusive")
@@ -41,6 +42,7 @@ def parseInput(inputfile, selHeuristic):
     for r in rows:
         terrainMap.append(r)
 
+    # find goal and start nodes, replace with complexity 1
     currRow = 0
     for row in terrainMap:
         currCol = 0
@@ -61,19 +63,17 @@ def parseInput(inputfile, selHeuristic):
     # convert to x y
     terrainMap = [list(i) for i in zip(*terrainMap)]
     
-    # NOTE: map coordinates are x,y
-    
     return MapInfo(startCoords, goalCoords, terrainMap, selHeuristic)
 
-        
+# computes and returns h(s) for a given state        
 def getHeuristic(coords, heading, map_info):
     selHeuristic = map_info.selHeuristic
     
-    # use if statements to determine which heuristic to apply
-    # return heuristic value for the input coordinates
+	# determine horizontal and vertical offset from goal
     horizontal = abs(map_info.goalCoords[0] - coords[0])
     vertical = abs(map_info.goalCoords[1] - coords[1])
 
+	# function for calculating the value of heuristic 5
     def getHeuristic5():
         # print "Current: " + str(coords)
         # print "Goal: " + str(map_info.goalCoords)
@@ -83,30 +83,7 @@ def getHeuristic(coords, heading, map_info):
         else:
             return heuristic + (vertical != 0)
 
-
-        #     above_goal = (map_info.goalCoords[1] - coords[1] > 0)
-        #     same_col = (horizontal == 0)
-        #     print "Above Goal: " + str(above_goal)
-        #     print "Same Column " + str(same_col)
-        #     heuristic += (not same_col)
-        #     if (heading == 'N'):
-        #         return heuristic + (above_goal) + (same_col and above_goal)
-        #     else:
-        #         # 'S'
-        #         return heuristic + (not above_goal) + (same_col and not above_goal)
-        # else:
-        #     # 'E' or 'W'
-        #     left_of_goal = (map_info.goalCoords[0] - coords[0] > 0)
-        #     same_row = (vertical == 0)
-        #     print "Left of Goal: " + str(left_of_goal)
-        #     print "Same Row: " + str(same_row)
-        #     heuristic += (not same_row)
-        #     if (heading == 'E'):
-        #         return heuristic + (left_of_goal) + (same_row and left_of_goal)
-        #     else:
-        #         # 'W'
-        #         return heuristic + (not left_of_goal) + (same_row and not left_of_goal)
-
+	# return the value of the appropriate heuristic function
     if selHeuristic == 1:
         return 0
     elif selHeuristic == 2:
@@ -121,7 +98,7 @@ def getHeuristic(coords, heading, map_info):
         return 3*getHeuristic5()
 
         
-
+# expand a single node from the frontier, adding its non-duplicate children to the frontier
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
     expandedStates.append(node)
@@ -266,9 +243,11 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 if state.seqCost < frontierList[stateIndex].seqCost:
                     frontierList[stateIndex] = state  
 
-    # sort frontierList by score (cost + heuristic)
+    # sort frontierList by score (g(s) + h(s))
     frontierList.sort(key=lambda state: state.score)
         
+# run the A* search by expanding nodes until the goal appears at the beginning of the sorted frontier
+# return the information required for the assignment
 def runSearch(map_info):
     frontier = []
     expandedStates = []
@@ -280,9 +259,8 @@ def runSearch(map_info):
             return (frontier[0], len(expandedStates))
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
-        
-sys.argv = ['astar.py', 'Test 8.txt', 4]
 
+# parse the command line inputs, run A*, print the results
 def main():
     filename = sys.argv[1]
     selHeuristic = int(sys.argv[2]) # which heuristic function to use

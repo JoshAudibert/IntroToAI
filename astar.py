@@ -68,13 +68,46 @@ def parseInput(inputfile, selHeuristic):
     return MapInfo(startCoords, goalCoords, terrainMap, selHeuristic)
 
         
-def getHeuristic(coords, map_info):
+def getHeuristic(coords, heading, map_info):
     selHeuristic = map_info.selHeuristic
     
     # use if statements to determine which heuristic to apply
     # return heuristic value for the input coordinates
     horizontal = abs(map_info.goalCoords[0] - coords[0])
     vertical = abs(map_info.goalCoords[1] - coords[1])
+
+    def getHeuristic5():
+        # print "Current: " + str(coords)
+        # print "Goal: " + str(map_info.goalCoords)
+        heuristic = (horizontal + vertical)
+        if heading == 'N' or heading == 'S':
+            return heuristic + (horizontal != 0)
+        else:
+            return heuristic + (vertical != 0)
+
+
+        #     above_goal = (map_info.goalCoords[1] - coords[1] > 0)
+        #     same_col = (horizontal == 0)
+        #     print "Above Goal: " + str(above_goal)
+        #     print "Same Column " + str(same_col)
+        #     heuristic += (not same_col)
+        #     if (heading == 'N'):
+        #         return heuristic + (above_goal) + (same_col and above_goal)
+        #     else:
+        #         # 'S'
+        #         return heuristic + (not above_goal) + (same_col and not above_goal)
+        # else:
+        #     # 'E' or 'W'
+        #     left_of_goal = (map_info.goalCoords[0] - coords[0] > 0)
+        #     same_row = (vertical == 0)
+        #     print "Left of Goal: " + str(left_of_goal)
+        #     print "Same Row: " + str(same_row)
+        #     heuristic += (not same_row)
+        #     if (heading == 'E'):
+        #         return heuristic + (left_of_goal) + (same_row and left_of_goal)
+        #     else:
+        #         # 'W'
+        #         return heuristic + (not left_of_goal) + (same_row and not left_of_goal)
 
     if selHeuristic == 1:
         return 0
@@ -85,11 +118,12 @@ def getHeuristic(coords, map_info):
     elif selHeuristic == 4:
         return horizontal + vertical
     elif selHeuristic == 5:
-        return (horizontal + vertical) + (horizontal != 0) + (vertical != 0)
+        return getHeuristic5()
     else:
-        return 3*((horizontal + vertical) + (horizontal != 0) + (vertical != 0))
+        return 3*getHeuristic5()
 
         
+
 def expandNode(node, frontierList, expandedStates, map_info):
     frontierList.remove(node)
     if node in expandedStates:
@@ -105,14 +139,14 @@ def expandNode(node, frontierList, expandedStates, map_info):
             'E',
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
             'W',
             node.moveSeq + ['L'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # forward
         if node.coords[1] - 1 >= 0:
             neighboringStates.append(SearchState(
@@ -120,7 +154,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'N',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] - 1],
-                node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] - 1] + getHeuristic((node.coords[0], node.coords[1] - 1), map_info)))
+                node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] - 1] + getHeuristic((node.coords[0], node.coords[1] - 1), node.heading, map_info)))
         # bash
         if node.coords[1] - 2 >= 0:
             neighboringStates.append(SearchState(
@@ -128,7 +162,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'N',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2] + getHeuristic((node.coords[0], node.coords[1] - 2), map_info)))
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] - 2] + getHeuristic((node.coords[0], node.coords[1] - 2), node.heading, map_info)))
     elif node.heading == 'E':
         # turn right
         neighboringStates.append(SearchState(
@@ -136,14 +170,14 @@ def expandNode(node, frontierList, expandedStates, map_info):
             'S',
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
             'N',
             node.moveSeq + ['L'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # forward
         if node.coords[0] + 1 < map_info.width:
             neighboringStates.append(SearchState(
@@ -151,7 +185,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'E',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0] + 1][node.coords[1]],
-                node.seqCost + map_info.terrainMap[node.coords[0] + 1][node.coords[1]] + getHeuristic((node.coords[0] + 1, node.coords[1]), map_info)))
+                node.seqCost + map_info.terrainMap[node.coords[0] + 1][node.coords[1]] + getHeuristic((node.coords[0] + 1, node.coords[1]), node.heading, map_info)))
         # bash
         if node.coords[0] + 2 < map_info.width:
             neighboringStates.append(SearchState(
@@ -159,7 +193,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'E',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0] + 2][node.coords[1]],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0] + 2][node.coords[1]] + getHeuristic((node.coords[0] + 2, node.coords[1]), map_info)))
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0] + 2][node.coords[1]] + getHeuristic((node.coords[0] + 2, node.coords[1]), node.heading, map_info)))
     elif node.heading == 'S':
         # turn right
         neighboringStates.append(SearchState(
@@ -167,14 +201,14 @@ def expandNode(node, frontierList, expandedStates, map_info):
             'W',
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
             'E',
             node.moveSeq + ['L'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # forward
         if node.coords[1] + 1 < map_info.height:
             neighboringStates.append(SearchState(
@@ -182,7 +216,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'S',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] + 1],
-                node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] + 1] + getHeuristic((node.coords[0], node.coords[1] + 1), map_info)))
+                node.seqCost + map_info.terrainMap[node.coords[0]][node.coords[1] + 1] + getHeuristic((node.coords[0], node.coords[1] + 1), node.heading, map_info)))
         # bash
         if node.coords[1] + 2 < map_info.height:
             neighboringStates.append(SearchState(
@@ -190,7 +224,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'S',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] + 2],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] + 2] + getHeuristic((node.coords[0], node.coords[1] + 2), map_info)))
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0]][node.coords[1] + 2] + getHeuristic((node.coords[0], node.coords[1] + 2), node.heading, map_info)))
     elif node.heading == 'W':
         # turn right
         neighboringStates.append(SearchState(
@@ -198,14 +232,14 @@ def expandNode(node, frontierList, expandedStates, map_info):
             'N',
             node.moveSeq + ['R'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # turn left
         neighboringStates.append(SearchState(
             node.coords,
             'S',
             node.moveSeq + ['L'],
             node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0),
-            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, map_info)))
+            node.seqCost + ceil(map_info.terrainMap[node.coords[0]][node.coords[1]]/3.0) + getHeuristic(node.coords, node.heading, map_info)))
         # forward
         if node.coords[0] - 1 >= 0:
             neighboringStates.append(SearchState(
@@ -213,7 +247,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'W',
                 node.moveSeq + ['F'],
                 node.seqCost + map_info.terrainMap[node.coords[0] - 1][node.coords[1]],
-                node.seqCost + map_info.terrainMap[node.coords[0] - 1][node.coords[1]] + getHeuristic((node.coords[0] - 1, node.coords[1]), map_info)))
+                node.seqCost + map_info.terrainMap[node.coords[0] - 1][node.coords[1]] + getHeuristic((node.coords[0] - 1, node.coords[1]), node.heading, map_info)))
         # bash
         if node.coords[0] - 2 >= 0:
             neighboringStates.append(SearchState(
@@ -221,7 +255,7 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 'W',
                 node.moveSeq + ['B', 'F'],
                 node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]],
-                node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]] + getHeuristic((node.coords[0] - 2, node.coords[1]), map_info)))
+                node.seqCost + 3 + map_info.terrainMap[node.coords[0] - 2][node.coords[1]] + getHeuristic((node.coords[0] - 2, node.coords[1]), node.heading, map_info)))
     
     # add unique neighbors and neighbors with lower cost to frontier
     # implementation depends on in, index, and remove functions using the __eq__ defined for state, not sure if they do
@@ -234,14 +268,19 @@ def expandNode(node, frontierList, expandedStates, map_info):
                 # duplicate in Frontier
                 stateIndex = frontierList.index(state)
                 if state.score < frontierList[stateIndex].score:
-                    frontierList[stateIndex] = state    
+                    frontierList[stateIndex] = state  
+        else:
+            # duplicate in expandedStates
+            stateIndex = expandedStates.index(state)
+            if state.score < expandedStates[stateIndex].score:
+                print "****ERROR***"
     # sort frontierList by score (cost + heuristic)
     frontierList.sort(key=lambda state: state.score)
         
 def runSearch(map_info):
     frontier = []
     expandedStates = []
-    frontier.append(SearchState(map_info.startCoords, 'N', [], 0, getHeuristic(map_info.startCoords, map_info)))
+    frontier.append(SearchState(map_info.startCoords, 'N', [], 0, getHeuristic(map_info.startCoords, 'N', map_info)))
     solnFound = False
     while solnFound == False:
         if frontier[0].coords == map_info.goalCoords:
@@ -250,6 +289,8 @@ def runSearch(map_info):
         else:
             expandNode(frontier[0], frontier, expandedStates, map_info)
         
+sys.argv = ['astar.py', 'Test 6.txt', 5]
+
 def main():
     filename = sys.argv[1]
     selHeuristic = int(sys.argv[2]) # which heuristic function to use

@@ -2,7 +2,7 @@ import random
 import abc
 
 # Genetic Algorithm
-class GeneticAlgorithm:
+class BaseGA:
 	__metaclass__ = abc.ABCMeta
 
 	@abc.abstractmethod
@@ -23,7 +23,7 @@ class GeneticAlgorithm:
 		
 
 
-def runGA():
+def runGA(ga):
 	population = []
 	# set up population
 	fitnessFn
@@ -52,6 +52,10 @@ def main():
     puzzleNum = sys.argv[1]
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
+
+    # create GeneticAlgorithm based on puzzleNum
+    ga = BaseGA
+    runGA(ga)
     
     
 if __name__ == "__main__":

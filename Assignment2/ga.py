@@ -1,19 +1,26 @@
 import random
+import abc
 
 # Genetic Algorithm
+class GeneticAlgorithm:
+	__metaclass__ = abc.ABCMeta
 
+	@abc.abstractmethod
+	def fitnessFn(self, child):
+		"""Implement this per puzzle"""
 
+	@abc.abstractmethod
+	def randomSelection(self, population):
+		"""Implement this per puzzle"""
 
-def mutate(child):
-	pass
+	@abc.abstractmethod
+	def reproduce(self, parent_x, parent_y):
+		"""Implement this per puzzle"""
 
-
-def reproduce(parent_x, parent_y):
-	pass
-
-
-def randomSelection(population, fitnessFn):
-	pass
+	@abc.abstractmethod
+	def mutate(self, child):
+		"""Implement this per puzzle"""
+		
 
 
 def runGA():

@@ -1,26 +1,21 @@
 import random
-import abc
 
 # Genetic Algorithm
-class GeneticAlgorithm:
-	__metaclass__ = abc.ABCMeta
 
-	@abc.abstractmethod
-	def fitnessFn(self, child):
-		"""Implement this per puzzle"""
+# parse the input differently depending on which problem is being run
+def parseInput(inputfile, problemNum):
+    f = open(inputfile, 'r')
 
-	@abc.abstractmethod
-	def randomSelection(self, population):
-		"""Implement this per puzzle"""
+def mutate(child):
+	pass
 
-	@abc.abstractmethod
-	def reproduce(self, parent_x, parent_y):
-		"""Implement this per puzzle"""
 
-	@abc.abstractmethod
-	def mutate(self, child):
-		"""Implement this per puzzle"""
-		
+def reproduce(parent_x, parent_y):
+	pass
+
+
+def randomSelection(population, fitnessFn):
+	pass
 
 
 def runGA():
@@ -52,6 +47,7 @@ def main():
     puzzleNum = sys.argv[1]
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
+    parseInput(filename, puzzleNum)
     
     
 if __name__ == "__main__":

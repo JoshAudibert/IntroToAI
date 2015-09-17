@@ -1,3 +1,4 @@
+import problem1, problem2, problem3
 import random
 import abc
 
@@ -54,7 +55,16 @@ def main():
     timeLimit = sys.argv[3]
 
     # create GeneticAlgorithm based on puzzleNum
-    ga = BaseGA
+    if puzzleNum == 1:
+    	ga = AddingGA()
+    elif puzzleNum == 2:
+    	ga = BinGA()
+    elif puzzleNum == 3:
+    	ga = TowerGA()
+    else:
+    	print "Please input a puzzle number between 1 and 3 inclusive"
+    	exit()
+   
     runGA(ga)
     
     

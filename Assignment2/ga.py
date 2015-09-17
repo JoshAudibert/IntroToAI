@@ -41,6 +41,7 @@ def runGA():
 		if time >= timeAllowed:
 			done = True
 
+sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():

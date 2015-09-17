@@ -41,7 +41,11 @@ def runGA():
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
-    runGA()
+    # Command line format: ga.py puzzle# filename timeLimit
+    puzzleNum = sys.argv[1]
+    filename = sys.argv[2]
+    timeLimit = sys.argv[3]
+    
     
 if __name__ == "__main__":
     main()

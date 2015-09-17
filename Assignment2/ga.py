@@ -3,7 +3,7 @@ import random
 import abc
 
 # Genetic Algorithm
-class BaseGA:
+class GeneticAlgorithm:
 	__metaclass__ = abc.ABCMeta
 
 	@abc.abstractmethod
@@ -24,7 +24,7 @@ class BaseGA:
 		
 
 
-def runGA(ga):
+def runGA():
 	population = []
 	# set up population
 	fitnessFn

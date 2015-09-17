@@ -1,22 +1,48 @@
 import problem1, problem2, problem3
 import random
+import abc
 
 # Genetic Algorithm
+class GeneticAlgorithm:
+	__metaclass__ = abc.ABCMeta
+
+	@abc.abstractmethod
+	def fitnessFn(self, child):
+		"""Implement this per puzzle"""
+
+	@abc.abstractmethod
+	def randomSelection(self, population):
+		"""Implement this per puzzle"""
+
+	@abc.abstractmethod
+	def reproduce(self, parent_x, parent_y):
+		"""Implement this per puzzle"""
+
+	@abc.abstractmethod
+	def mutate(self, child):
+		"""Implement this per puzzle"""
 
 # parse the input differently depending on which problem is being run
-def parseInput(inputfile, problemNum):
+def parseInput(problemNum, inputfile, timeLimit):
+
+    # create GeneticAlgorithm based on puzzleNum
+    if puzzleNum == 1:
+    	ga = AddingGA()
+    elif puzzleNum == 2:
+    	ga = BinGA()
+    elif puzzleNum == 3:
+    	ga = TowerGA()
+    else:
+    	print "Please input a puzzle number between 1 and 3 inclusive"
+    	exit()
+
     f = open(inputfile, 'r')
 
-def mutate(child):
-	pass
+    # Parse file according to problem
 
 
-def reproduce(parent_x, parent_y):
-	pass
+    return geneticAlgorithm
 
-
-def randomSelection(population, fitnessFn):
-	pass
 
 
 def runGA():
@@ -49,18 +75,9 @@ def main():
     puzzleNum = sys.argv[1]
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
-    parseInput(filename, puzzleNum)
+    ga = parseInput(filename, puzzleNum)
 
-    # create GeneticAlgorithm based on puzzleNum
-    if puzzleNum == 1:
-    	ga = AddingGA()
-    elif puzzleNum == 2:
-    	ga = BinGA()
-    elif puzzleNum == 3:
-    	ga = TowerGA()
-    else:
-    	print "Please input a puzzle number between 1 and 3 inclusive"
-    	exit()
+    
    
     runGA(ga)
     

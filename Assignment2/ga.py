@@ -11,7 +11,7 @@ class GeneticAlgorithm:
 		"""Implement this per puzzle"""
 
 	@abc.abstractmethod
-	def randomSelection(self, population):
+	def randomSelection(self, population, fitnessFn):
 		"""Implement this per puzzle"""
 
 	@abc.abstractmethod

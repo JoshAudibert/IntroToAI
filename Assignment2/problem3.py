@@ -17,7 +17,7 @@ class TowerGA(BaseGA):
 	def fitnessFn(self, child):
 		pass
 
-	def randomSelection(self, population):
+	def randomSelection(self, population, fitnessFn):
 		pass
 
 	def reproduce(self, parent_x, parent_y):

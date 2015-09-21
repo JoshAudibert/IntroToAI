@@ -23,19 +23,18 @@ class GeneticAlgorithm:
 		"""Implement this per puzzle"""
 
 # parse the input differently depending on which problem is being run
-def parseInput(problemNum, inputfile, timeLimit):
+def parseInput(puzzleNum, inputfile, timeLimit):
 
     f = open(inputfile, 'r')
 
     # create GeneticAlgorithm and parse input based on puzzleNum
     if puzzleNum == 1:
-    	ga = AddingGA()
 
-        lines = open(inputfile).read().splitlines()
-        
+        lines = f.read().splitlines()
         # First number is the target number
         targetNum = lines.pop(0)
-        ga.goalVal = targetNum
+        # Add list and target number to new genetic algorithm
+        ga = AddingGA(targetNum, lines)
     	
     elif puzzleNum == 2:
     	ga = BinGA()
@@ -44,12 +43,6 @@ def parseInput(problemNum, inputfile, timeLimit):
     else:
     	print "Please input a puzzle number between 1 and 3 inclusive"
     	exit()
-
-    
-
-
-    
-
 
     return geneticAlgorithm
 
@@ -85,7 +78,7 @@ def main():
     puzzleNum = sys.argv[1]
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
-    ga = parseInput(filename, puzzleNum)
+    ga = parseInput(puzzleNum, filename, timeLimit)
 
     
    

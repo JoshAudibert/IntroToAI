@@ -3,8 +3,9 @@ import BaseGA from ga
 # Artificial Intelligence Assignment 2 Problem 2
 
 class BinGA(BaseGA):
-	def __init__(self):
+	def __init__(self, numlist):
 		# initialize population
+		self.numList = numList
 
 	def fitnessFn(self, child):
 		pass

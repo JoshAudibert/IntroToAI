@@ -4,9 +4,10 @@ import random
 # Artificial Intelligence Assignment 2 Problem 1
 
 class AddingGA(BaseGA):
-	def __init__(self, goalVal):
+	def __init__(self, goalVal, numList):
 		# initialize population
 		self.goalVal = goalVal
+		self.numList = numList
 
 	def fitnessFn(self, child):
 		NEG_MULT = 2

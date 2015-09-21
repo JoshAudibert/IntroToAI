@@ -19,11 +19,16 @@ class AddingGA(BaseGA):
 	def randomSelection(self, population, fitnessFn):
 		# List of child, fitness pairs
 		pop_fitnesses = [[child, fitnessFn(child)] for child in population]
-		total = sum(pop_fitness[1] for pop_fitness in pop_fitnesses)
+		max_fit = -1
+		for fitness in pop_fitnesses:
+			if fitness[1] > max_fit:
+				max_fit = fitness[1]
+		norm_fitnesses = [[pop_fitness[0], (-1) * pop_fitness[1] + max_fit + 1] for pop_fitness in pop_fitnesses]
+		total = sum(pop_fitness[1] for pop_fitness in norm_fitnesses)
 		rand = random.uniform(0, total)
 		cumul_sum = 0
 		# finds which fitness range the rand fell into
-		for child, pop_fitness in pop_fitnesses:
+		for child, pop_fitness in norm_fitnesses:
 			if rand < cumul_sum + pop_fitness:
 				return child
 			cumul_sum += pop_fitness

@@ -4,11 +4,17 @@ import random
 # Artificial Intelligence Assignment 2 Problem 3
 
 class AddingGA(BaseGA):
-	def __init__(self):
+	def __init__(self, goalVal):
 		# initialize population
+		self.goalVal = goalVal
 
 	def fitnessFn(self, child):
-		pass
+		NEG_MULT = 2
+		childSum = sum(child)
+		if childSum > self.goalVal:
+			return NEG_MULT * (childSum - self.goalVal)
+		else:
+			return self.goalVal - childSum
 
 	def randomSelection(self, population, fitnessFn):
 		# List of child, fitness pairs

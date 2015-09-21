@@ -1,12 +1,27 @@
-import BaseGA from ga
+import abc
+from ga import GeneticAlgorithm
 import random
 
 # Artificial Intelligence Assignment 2 Problem 3
 
-class AddingGA(BaseGA):
-	def __init__(self, goalVal):
+class AddingGA(GeneticAlgorithm):
+	def __init__(self, goalVal, traits):
 		# initialize population
 		self.goalVal = goalVal
+		self.traits = list(traits)
+		
+	def generatePopulation(self):
+		POP_SIZE = 20
+		population = []
+		for i in range(POP_SIZE):
+			individual = []
+			for j in range(len(self.traits)):
+				if random.randint(0,1):
+					individual.append(self.traits[j])
+				else:
+					individual.append(0)
+			population.append(individual)
+		return population
 
 	def fitnessFn(self, child):
 		NEG_MULT = 2
@@ -49,6 +64,7 @@ class AddingGA(BaseGA):
 		child_b = y_left + x_right
 		
 		# return something...
+		return child_a
 		
 		pass
 

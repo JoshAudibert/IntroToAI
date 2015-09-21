@@ -1,10 +1,11 @@
-import BaseGA from ga
+from ga import GeneticAlgorithm
 
 # Artificial Intelligence Assignment 2 Problem 2
 
-class BinGA(BaseGA):
+class BinGA(GeneticAlgorithm):
 	def __init__(self):
 		# initialize population
+		pass
 
 	def fitnessFn(self, child):
 		pass

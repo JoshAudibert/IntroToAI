@@ -1,4 +1,4 @@
-import BaseGA from ga
+from ga import GeneticAlgorithm
 
 # Artificial Intelligence Assignment 2 Problem 3
 
@@ -10,9 +10,10 @@ class towerPiece:
         self.strength = terrainMap 
         self.cost = selHeuristic 
 
-class TowerGA(BaseGA):
+class TowerGA(GeneticAlgorithm):
 	def __init__(self):
 		# initialize population
+		pass
 
 	def fitnessFn(self, child):
 		pass

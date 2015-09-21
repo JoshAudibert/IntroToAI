@@ -1,10 +1,17 @@
-import problem1, problem2, problem3
+from problem1 import AddingGA
+from problem2 import BinGA
+from problem3 import TowerGA
 import random
+import time
 import abc
 
 # Genetic Algorithm
 class GeneticAlgorithm:
 	__metaclass__ = abc.ABCMeta
+	
+	@abc.abstractmethod
+	def generatePopulaiton(self):
+		"""Implement this per puzzle"""
 
 	@abc.abstractmethod
 	def fitnessFn(self, child):
@@ -25,9 +32,11 @@ class GeneticAlgorithm:
 # parse the input differently depending on which problem is being run
 def parseInput(problemNum, inputfile, timeLimit):
 
+    f = open(inputfile, 'r')
+	
     # create GeneticAlgorithm based on puzzleNum
     if puzzleNum == 1:
-    	ga = AddingGA()
+    	ga = AddingGA(11, [2,3,5,7])
     elif puzzleNum == 2:
     	ga = BinGA()
     elif puzzleNum == 3:
@@ -36,26 +45,25 @@ def parseInput(problemNum, inputfile, timeLimit):
     	print "Please input a puzzle number between 1 and 3 inclusive"
     	exit()
 
-    f = open(inputfile, 'r')
-
     # Parse file according to problem
 
 
-    return geneticAlgorithm
+    return ga
 
 
 
-def runGA():
-	population = []
+def runGA(ga):
+	population = ga.generatePopulaiton
 	# set up population
-	fitnessFn
+	# fitnessFn
 	time = 0
-	timeAllowed
+	timeAllowed = 10
 	mutation_prob = .001
 	done = False
+	start_time = time.time()
 	while not done:
 		new_population = []
-		for in range(len(population)):
+		for x in range(len(population)):
 			parent_x = randomSelection(population, fitnessFn)
 			# potentially temporarily remove parent_x from population so parent_y isn't also parent_x
 			parent_y = randomSelection(population, fitnessFn)
@@ -64,7 +72,7 @@ def runGA():
 				child = mutate(child)
 			new_population.append(child)
 		population = new_population
-		if time >= timeAllowed:
+		if time.time() - start_time >= timeAllowed:
 			done = True
 
 sys.argv = ['ga.py', 1, 'Test1.txt', 1000]

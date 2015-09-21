@@ -1,7 +1,7 @@
 import BaseGA from ga
 import random
 
-# Artificial Intelligence Assignment 2 Problem 3
+# Artificial Intelligence Assignment 2 Problem 1
 
 class AddingGA(BaseGA):
 	def __init__(self, goalVal):

@@ -1,13 +1,27 @@
-import BaseGA from ga
+import abc
+from ga_abstract import GeneticAlgorithm
 import random
 
 # Artificial Intelligence Assignment 2 Problem 1
 
-class AddingGA(BaseGA):
-	def __init__(self, goalVal, numList):
+class AddingGA(GeneticAlgorithm):
+	def __init__(self, goalVal, traits):
 		# initialize population
 		self.goalVal = goalVal
-		self.numList = numList
+		self.traits = list(traits)
+		
+	def generatePopulation(self):
+		POP_SIZE = 20
+		population = []
+		for i in range(POP_SIZE):
+			individual = []
+			for j in range(len(self.traits)):
+				if random.randint(0,1):
+					individual.append(self.traits[j])
+				else:
+					individual.append(0)
+			population.append(individual)
+		return population
 
 	def fitnessFn(self, child):
 		NEG_MULT = 2
@@ -19,6 +33,11 @@ class AddingGA(BaseGA):
 
 	def randomSelection(self, population, fitnessFn):
 		# List of child, fitness pairs
+		for child in population:
+			if(type(child) != list):
+				print "problem"
+				print child
+		
 		pop_fitnesses = [[child, fitnessFn(child)] for child in population]
 		max_fit = -1
 		for fitness in pop_fitnesses:
@@ -37,12 +56,13 @@ class AddingGA(BaseGA):
 
 	def reproduce(self, parent_x, parent_y):
 		# generate a split index
+		#print len(parent_x)
 		split = random.randint(1, len(parent_x) - 1)
 		
 		# generate the sub-lists from the split
-		x_left = list(parent_x[0:split-1])
+		x_left = list(parent_x[0:split])
 		x_right = list(parent_x[split:])
-		y_left = list(parent_y[0:split-1])
+		y_left = list(parent_y[0:split])
 		y_right = list(parent_y[split:])
 		
 		# merge the sublists to create children
@@ -50,6 +70,9 @@ class AddingGA(BaseGA):
 		child_b = y_left + x_right
 		
 		# return something...
+		if(len(child_a) != 4):
+			print child_a
+		return child_a
 		
 		pass
 

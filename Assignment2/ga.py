@@ -1,26 +1,11 @@
-import problem1, problem2, problem3
+from problem1 import AddingGA
+from problem2 import BinGA
+from problem3 import TowerGA
+from ga_abstract import GeneticAlgorithm
 import random
+import time
 import abc
-
-# Genetic Algorithm
-class GeneticAlgorithm:
-	__metaclass__ = abc.ABCMeta
-
-	@abc.abstractmethod
-	def fitnessFn(self, child):
-		"""Implement this per puzzle"""
-
-	@abc.abstractmethod
-	def randomSelection(self, population, fitnessFn):
-		"""Implement this per puzzle"""
-
-	@abc.abstractmethod
-	def reproduce(self, parent_x, parent_y):
-		"""Implement this per puzzle"""
-
-	@abc.abstractmethod
-	def mutate(self, child):
-		"""Implement this per puzzle"""
+import sys
 
 # parse the input differently depending on which problem is being run
 def parseInput(puzzleNum, inputfile, timeLimit):
@@ -35,63 +20,78 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         targetNum = lines.pop(0)
         # Add list and target number to new genetic algorithm
         ga = AddingGA(targetNum, lines)
-    	
+        
+        
+    # for testing only, remove later
+        ga = AddingGA(11, [2,3,5,7])
+        
     elif puzzleNum == 2:
 
         lines = f.read().splitlines()
         # Add list to new genetic algorithm
-    	ga = BinGA(lines)
-    	
+        ga = BinGA(lines)
+        
     elif puzzleNum == 3:
 
         # Read in all numbers from the file
         lines = f.read().splitlines()
+        pieces = list()
 
-        for count in xrange(len(lines))
-        pieceType
-        width
-        strength
-        cost
-    	ga = TowerGA(pieceType, width, strength, cost)
+        for count in xrange(len(lines)/4):
+            pieceType[4*count]
+            width[4*count + 1]
+            strength[4*count + 2]
+            cost[4*count + 3]
+            currPiece = TowerGA(pieceType, width, strength, cost)
+            pieces.append(currPiece)
     else:
-    	print "Please input a puzzle number between 1 and 3 inclusive"
-    	exit()
+        print "Please input a puzzle number between 1 and 3 inclusive"
+        exit()
 
     return ga
 
 
 
-def runGA():
-	population = []
-	# set up population
-	fitnessFn
-	time = 0
-	timeAllowed
-	mutation_prob = .001
-	done = False
-	while not done:
-		new_population = []
-		for in range(len(population)):
-			parent_x = randomSelection(population, fitnessFn)
-			# potentially temporarily remove parent_x from population so parent_y isn't also parent_x
-			parent_y = randomSelection(population, fitnessFn)
-			child = reproduce(parent_x, parent_y)
-			if random.random() <= mutation_prob:
-				child = mutate(child)
-			new_population.append(child)
-		population = new_population
-		if time >= timeAllowed:
-			done = True
-
-sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
+def runGA(ga):
+    population = ga.generatePopulation()
+    # set up population
+    # fitnessFn
+    # time = 0
+    timeAllowed = 10
+    mutation_prob = .001
+    done = False
+    start_time = time.time()
+    while not done:
+        new_population = []
+        for x in range(len(population)):
+            parent_x = ga.randomSelection(population, ga.fitnessFn)
+            # potentially temporarily remove parent_x from population so parent_y isn't also parent_x
+            parent_y = ga.randomSelection(population, ga.fitnessFn)
+            child = ga.reproduce(parent_x, parent_y)
+            #if random.random() <= mutation_prob:
+            #   child = ga.mutate(child)
+            new_population.append(child)
+        population = new_population
+        if time.time() - start_time >= timeAllowed:
+            done = True
+    
+    print "best solution"
+    best_fit = ga.fitnessFn(population[0])
+    fit_index = 0
+    for individual in population:
+        if(ga.fitnessFn(individual) < best_fit):
+            best_fit = ga.fitnessFn(individual)
+            fit_index = population.index(individual)
+    print population[fit_index]
+#sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
     # Command line format: ga.py puzzle# filename timeLimit
-    puzzleNum = sys.argv[1]
+    puzzleNum = int(sys.argv[1])
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
-    ga = parseInput(puzzleNum, filename, timeLimit)    
+    ga = parseInput(puzzleNum, filename, timeLimit)
    
     runGA(ga)
     

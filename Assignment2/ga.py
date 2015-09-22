@@ -1,32 +1,36 @@
 from problem1 import AddingGA
 from problem2 import BinGA
 from problem3 import TowerGA
+from problem3 import towerPiece
 import time
 import sys
 
 # parse the input differently depending on which problem is being run
 def parseInput(puzzleNum, inputfile, timeLimit):
 
-  #  f = open(inputfile, 'r')
+    f = open(inputfile, 'r')
 
     # create GeneticAlgorithm based on puzzleNum
     if puzzleNum == 1:
 
-        #lines = f.read().splitlines()
+        lines = f.read().splitlines()
+        int_list = [int(i) for i in lines]
         # First number is the target number
-        #targetNum = lines.pop(0)
+        targetNum = int(int_list.pop(0))
         # Add list and target number to new genetic algorithm
-        #ga = AddingGA(targetNum, lines)
-        
+        ga = AddingGA(targetNum, int_list)
+
+        print int_list
         
     # for testing only, remove later
-        ga = AddingGA(11, [2,3,5,7])
+        #ga = AddingGA(11, [2,3,5,7])
         
     elif puzzleNum == 2:
 
         lines = f.read().splitlines()
+        int_list = [int(i) for i in lines]
         # Add list to new genetic algorithm
-        ga = BinGA(lines)
+        ga = BinGA(lint_list)
         
     elif puzzleNum == 3:
 
@@ -34,13 +38,16 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         lines = f.read().splitlines()
         pieces = list()
 
-        for count in xrange(len(lines)/4):
-            pieceType[4*count]
-            width[4*count + 1]
-            strength[4*count + 2]
-            cost[4*count + 3]
-            currPiece = TowerGA(pieceType, width, strength, cost)
+        for count in xrange(len(lines)):
+            nums = lines[count].split()
+            pieceType = nums[0].replace(',', '')
+            width = int(nums[1].replace(',', ''))
+            strength = int(nums[2].replace(',', ''))
+            cost = int(nums[3].replace(',', ''))
+            currPiece = towerPiece(pieceType, width, strength, cost)
             pieces.append(currPiece)
+
+        ga = TowerGA(pieces)
 
     else:
         print "Please input a puzzle number between 1 and 3 inclusive"
@@ -83,7 +90,7 @@ def runGA(ga):
     print population[fit_index]
     print ga.str_phenotype(population[fit_index])
 
-sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
+sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
@@ -93,8 +100,7 @@ def main():
     timeLimit = sys.argv[3]
     ga = parseInput(puzzleNum, filename, timeLimit)
    
-    runGA(ga)
-    
+    #runGA(ga)   
     
 if __name__ == "__main__":
     main()

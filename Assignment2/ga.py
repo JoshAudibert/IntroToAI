@@ -11,10 +11,20 @@ import sys
 def parseInput(puzzleNum, inputfile, timeLimit):
 
     f = open(inputfile, 'r')
-	
-    # create GeneticAlgorithm based on puzzleNum
+
+    # create GeneticAlgorithm and parse input based on puzzleNum
     if puzzleNum == 1:
-    	ga = AddingGA(11, [2,3,5,7])
+    	ga = AddingGA()
+
+        lines = open(inputfile).read().splitlines()
+        
+        # First number is the target number
+        targetNum = lines.pop(0)
+        ga.goalVal = targetNum
+		
+		# for testing only, remove later
+		ga = AddingGA(11, [2,3,5,7])
+		
     elif puzzleNum == 2:
     	ga = BinGA()
     elif puzzleNum == 3:
@@ -24,8 +34,6 @@ def parseInput(puzzleNum, inputfile, timeLimit):
     	exit()
 
     # Parse file according to problem
-
-
     return ga
 
 

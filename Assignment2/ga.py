@@ -37,14 +37,27 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         ga = AddingGA(targetNum, lines)
     	
     elif puzzleNum == 2:
-    	ga = BinGA()
+
+        lines = f.read().splitlines()
+        # Add list to new genetic algorithm
+    	ga = BinGA(lines)
+    	
     elif puzzleNum == 3:
-    	ga = TowerGA()
+
+        # Read in all numbers from the file
+        lines = f.read().splitlines()
+
+        for count in xrange(len(lines))
+        pieceType
+        width
+        strength
+        cost
+    	ga = TowerGA(pieceType, width, strength, cost)
     else:
     	print "Please input a puzzle number between 1 and 3 inclusive"
     	exit()
 
-    return geneticAlgorithm
+    return ga
 
 
 
@@ -78,9 +91,7 @@ def main():
     puzzleNum = sys.argv[1]
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
-    ga = parseInput(puzzleNum, filename, timeLimit)
-
-    
+    ga = parseInput(puzzleNum, filename, timeLimit)    
    
     runGA(ga)
     

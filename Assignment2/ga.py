@@ -1,10 +1,7 @@
 from problem1 import AddingGA
 from problem2 import BinGA
 from problem3 import TowerGA
-from ga_abstract import GeneticAlgorithm
-import random
 import time
-import abc
 import sys
 
 # parse the input differently depending on which problem is being run
@@ -60,7 +57,7 @@ def runGA(ga):
 		if(ga.fitnessFn(individual) < best_fit):
 			best_fit = ga.fitnessFn(individual)
 			fit_index = population.index(individual)
-	print population[fit_index]
+	print ga.str_phenotype(population[fit_index])
 #sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results

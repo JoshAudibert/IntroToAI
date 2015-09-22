@@ -3,11 +3,10 @@ import random
 
 # Artificial Intelligence Assignment 2 Problem 2
 
+
 class BinGA(GeneticAlgorithm):
     def __init__(self, traits):
         self.traits = list(traits)
-        # initialize population
-        pass
 
     def binCheck(self, child):
         bc_one = 0

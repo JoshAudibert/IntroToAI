@@ -11,9 +11,9 @@ class towerPiece:
         self.cost = selHeuristic 
 
 class TowerGA(GeneticAlgorithm):
-	def __init__(self):
+	def __init__(self, pieces):
 		# initialize population
-		pass
+		self.pieces = list(pieces)
 
 	def generatePopulation(self):
 		pass

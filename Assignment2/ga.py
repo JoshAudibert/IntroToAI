@@ -57,7 +57,6 @@ def runGA(ga):
             fit_index = population.index(individual)
     print ga.str_phenotype(population[fit_index])
     print "Number of generations: " + str(numGens)
-sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
@@ -66,11 +65,9 @@ def main():
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
     ga = parseInput(puzzleNum, filename, timeLimit)
-
-    
-   
     runGA(ga)
     
-    
+
+sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 if __name__ == "__main__":
     main()

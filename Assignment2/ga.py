@@ -14,7 +14,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     # create GeneticAlgorithm and parse input based on puzzleNum
     if puzzleNum == 1:
-    	ga = AddingGA()
+    	ga = AddingGA(0,[])
 
         lines = open(inputfile).read().splitlines()
         
@@ -23,7 +23,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         ga.goalVal = targetNum
 		
 		# for testing only, remove later
-		ga = AddingGA(11, [2,3,5,7])
+        ga = AddingGA(11, [2,3,5,7])
 		
     elif puzzleNum == 2:
     	ga = BinGA()

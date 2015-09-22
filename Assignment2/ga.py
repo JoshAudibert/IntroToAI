@@ -23,7 +23,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         print int_list
         
     # for testing only, remove later
-        #ga = AddingGA(11, [2,3,5,7])
+       # ga = AddingGA(11, [2,3,5,7])
         
     elif puzzleNum == 2:
 
@@ -73,7 +73,8 @@ def runGA(ga):
             child = ga.reproduce(parent_x, parent_y)
             #if random.random() <= mutation_prob:
 
-            #	child = ga.mutate(child)
+            #   child = ga.mutate(child)
+
             new_population.append(child)
         population = new_population
         if time.time() - start_time >= timeAllowed:
@@ -90,8 +91,12 @@ def runGA(ga):
     print population[fit_index]
     print ga.str_phenotype(population[fit_index])
 
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
+    
+    print population[fit_index]
+    print ga.str_phenotype(population[fit_index])
 
+sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1000]
+    #sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
     # Command line format: ga.py puzzle# filename timeLimit
@@ -100,7 +105,7 @@ def main():
     timeLimit = sys.argv[3]
     ga = parseInput(puzzleNum, filename, timeLimit)
    
-    #runGA(ga)   
+    runGA(ga)   
     
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     # create GeneticAlgorithm based on puzzleNum
     if puzzleNum == 1:
-        ga = AddingGA(11, [2,3,5,7])
+        ga = AddingGA(11, [1,2,3,5,7])
 
     elif puzzleNum == 2:
         ga = BinGA()
@@ -28,12 +28,14 @@ def runGA(ga):
     # set up population
     # fitnessFn
     # time = 0
-    timeAllowed = 10
+    timeAllowed = 2
     mutation_prob = .001
     done = False
+    numGens = 1
     start_time = time.time()
     while not done:
         new_population = []
+        numGens += 1
         for x in range(len(population)):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
             # potentially temporarily remove parent_x from population so parent_y isn't also parent_x
@@ -54,7 +56,8 @@ def runGA(ga):
             best_fit = ga.fitnessFn(individual)
             fit_index = population.index(individual)
     print ga.str_phenotype(population[fit_index])
-#sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
+    print "Number of generations: " + str(numGens)
+sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():

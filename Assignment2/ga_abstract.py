@@ -23,3 +23,7 @@ class GeneticAlgorithm:
     @abc.abstractmethod
     def mutate(self, child):
         """Implement this per puzzle"""
+
+    @abc.abstractmethod
+    def str_phenotype(self, child):
+        """Implemetn this per puzzle"""

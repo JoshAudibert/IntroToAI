@@ -1,4 +1,4 @@
-from ga import GeneticAlgorithm
+from ga_abstract import GeneticAlgorithm
 
 # Artificial Intelligence Assignment 2 Problem 3
 
@@ -15,6 +15,9 @@ class TowerGA(GeneticAlgorithm):
 		# initialize population
 		pass
 
+	def generatePopulation(self):
+		pass
+	
 	def fitnessFn(self, child):
 		pass
 

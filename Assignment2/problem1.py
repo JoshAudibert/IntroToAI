@@ -2,7 +2,7 @@ import abc
 from ga_abstract import GeneticAlgorithm
 import random
 
-# Artificial Intelligence Assignment 2 Problem 3
+# Artificial Intelligence Assignment 2 Problem 1
 
 class AddingGA(GeneticAlgorithm):
     def __init__(self, goalVal, traits):

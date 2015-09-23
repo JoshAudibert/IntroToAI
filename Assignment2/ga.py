@@ -63,7 +63,6 @@ def runGA(ga):
     start_time = time.time()
 
     while not done:
-        print population
         new_population = []
         numGens += 1
         for x in range(len(population)):

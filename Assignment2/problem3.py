@@ -41,7 +41,24 @@ class TowerGA(GeneticAlgorithm):
         pass
 
     def reproduce(self, parent_x, parent_y):
-        pass
+        # generate a split index
+        # print len(parent_x)
+        split = random.randint(1, len(parent_x) - 1)
+
+        # generate the sub-lists from the split
+        x_left = list(parent_x[0:split])
+        x_right = list(parent_x[split:])
+        y_left = list(parent_y[0:split])
+        y_right = list(parent_y[split:])
+
+        # merge the sub-lists to create children
+        child_a = x_left + y_right
+        child_b = y_left + x_right
+
+        better_childa = self.checkTower(child_a)
+        better_childb = self.checkTower(child_b)
+
+        return better_childa
 
     def mutate(self, child):
         flipOne = random.randint(0,len(child)-1)

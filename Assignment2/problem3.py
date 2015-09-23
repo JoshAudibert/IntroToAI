@@ -44,7 +44,13 @@ class TowerGA(GeneticAlgorithm):
         pass
 
     def mutate(self, child):
-        pass
+        flipOne = random.randint(0,len(child)-1)
+        flipTwo = random.randint(0,len(child)-1)
+        while child[flipOne] == child[flipTwo]:
+            flipTwo = random.randint(0,len(child)-1)
+        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+
+        return child
 
     def str_phenotype(self, child):
             return self.filter_traits(child)

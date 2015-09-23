@@ -72,10 +72,28 @@ class BinGA(GeneticAlgorithm):
         pass
 
     def reproduce(self, parent_x, parent_y):
-        pass
+        # generate a split index
+        # print len(parent_x)
+        split = random.randint(1, len(parent_x) - 1)
+
+        # generate the sub-lists from the split
+        x_left = list(parent_x[0:split])
+        x_right = list(parent_x[split:])
+        y_left = list(parent_y[0:split])
+        y_right = list(parent_y[split:])
+
+        # merge the sub-lists to create children
+        child_a = x_left + y_right
+        child_b = y_left + x_right
 
     def mutate(self, child):
-        pass
+        flipOne = random.randint(len(child))
+        flipTwo = random.randint(len(child))
+        valueOne = 0
+        ValueTwo = 0
+        while child[flipOne] == child[flipTwo]:
+            flipTwo = random.randint(len(child))
+        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
 
     def str_phenotype(self, child):
         return self.filter_traits(child)

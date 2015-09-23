@@ -67,9 +67,8 @@ class TowerGA(GeneticAlgorithm):
             if child[i] > 0:
                 tower[child[i]] = self.pieces[i]
         
-        for i in range(len(tower)):
-            if tower[i] == 0:
-                tower.pop(i)
+        for i in range(tower.count(0)):
+            tower.remove(0)
                 
         fitness_score = base_score
         

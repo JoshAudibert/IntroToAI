@@ -60,38 +60,39 @@ def runGA(ga):
 
     # set initial variables
     timeAllowed = 2
-    mutation_prob = .001
+    mutation_prob = .01
     done = False
     numGens = 1
     start_time = time.time()
+    best_individual = population[0]
+    best_fit = ga.fitnessFn(best_individual)
 
     while not done:
+    	# look for new best fitness
+    	for individual in population:
+	        if(ga.fitnessFn(individual) > best_fit):
+	            best_fit = ga.fitnessFn(individual)
+	            best_individual = individual
+	            best_gen = numGens
         new_population = []
         numGens += 1
         for x in range(len(population)):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
             # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
             parent_y = ga.randomSelection(population, ga.fitnessFn)
-            print parent_x, parent_y
+            print parent_x, parent_y, numGens
             child = ga.reproduce(parent_x, parent_y)
             if random.random() <= mutation_prob:
                 child = ga.mutate(child)
-
             new_population.append(child)
         population = new_population
-        if time.time() - start_time >= timeAllowed:
-            done = True
+        if time.time() >= timeAllowed + start_time:
+        	print (time.time() - start_time)
+        	done = True
 
-    print "best solution"
-    best_fit = ga.fitnessFn(population[0])
-    fit_index = 0
-    for individual in population:
-        if(ga.fitnessFn(individual) < best_fit):
-            best_fit = ga.fitnessFn(individual)
-            fit_index = population.index(individual)
-            
-    print population[fit_index]
-    print ga.str_phenotype(population[fit_index])
+    print "*** Best solution"
+    print "Individual: ", ga.str_phenotype(best_individual)
+    print "Generation found: ", best_gen
     print "Number of generations: " + str(numGens)
 
 
@@ -104,7 +105,7 @@ def main():
     ga = parseInput(puzzleNum, filename, timeLimit)
     runGA(ga)
     
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
+sys.argv = ['ga.py', 2, 'problem2_test1.txt', 1000]
 
 if __name__ == "__main__":
     main()

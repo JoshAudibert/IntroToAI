@@ -13,32 +13,33 @@ class BinGA(GeneticAlgorithm):
         bc_one = 0
         bc_two = 0
         bc_three = 0
+        bin_size = int(len(child)/3.0)
         for i in range(len(child)):
             if child[i] == 1:
-                if bc_one < 2:
+                if bc_one < bin_size:
                     bc_one += 1
                 else:
-                    if bc_two < 2:
+                    if bc_two < bin_size:
                         child[i] = 2
                         bc_two += 1
                     else:
                         child[i] = 3
                         bc_three += 1
             elif child[i] == 2:
-                if bc_two < 2:
+                if bc_two < bin_size:
                     bc_two += 1
                 else:
-                    if bc_one < 2:
+                    if bc_one < bin_size:
                         child[i] = 1
                         bc_one += 1
                     else:
                         child[i] = 3
                         bc_three += 1
             else:
-                if bc_three < 2:
+                if bc_three < bin_size:
                     bc_three += 1
                 else:
-                    if bc_one < 2:
+                    if bc_one < bin_size:
                         child[i] = 1
                         bc_one += 1
                     else:
@@ -49,7 +50,7 @@ class BinGA(GeneticAlgorithm):
 
 
     def generatePopulation(self):
-        POP_SIZE = 20
+        POP_SIZE = 10
         population = []
         for i in range(POP_SIZE):
             individual = []
@@ -126,5 +127,5 @@ class BinGA(GeneticAlgorithm):
         return child
 
     def str_phenotype(self, child):
-        return self.filter_traits(child)
+        return "%s\nFitness: %s" % (str(self.filter_traits(child)), self.fitnessFn(child))
 

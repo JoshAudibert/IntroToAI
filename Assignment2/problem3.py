@@ -122,10 +122,16 @@ class TowerGA(GeneticAlgorithm):
             if child[i]:
                 non_zero_indices.append(i)
 
+        # if all zeros or only one piece
+        if len(non_zero_indices) <= 1:
+            child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces)+1)
+            return child
+
         flipOne = random.randint(0, len(non_zero_indices)-1)
-        flipTwo = random.randint(0, len(non_zero_indices)-1)
-        while child[flipOne] == child[flipTwo]:
-            flipTwo = random.randint(0, len(non_zero_indices)-1)
+        childCopy = list(child)
+        del childCopy[flipOne]
+        flipTwo = random.randint(0, len(childCopy)-1)
+        print childCopy, child, child[flipOne], child[flipTwo]
 
         # switch pieces
         child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
@@ -144,7 +150,11 @@ class TowerGA(GeneticAlgorithm):
         tower = [0] * len(self.pieces)
         for i in range(len(child)):
             if child[i]:
-                tower[child[i]-1] = self.pieces[i]
+                try:
+                    tower[child[i]-1] = self.pieces[i]
+                except:
+                    import ipdb; ipdb.set_trace()
+                    print "HERE"
         
         # remove zeros
         tower = filter(lambda z: z != 0, tower)

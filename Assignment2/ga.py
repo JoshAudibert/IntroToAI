@@ -84,6 +84,7 @@ def runGA(ga):
             print parent_x, parent_y, numGens
             child = ga.reproduce(parent_x, parent_y)
             if random.random() <= mutation_prob:
+                print "Mutating"
                 child = ga.mutate(child)
             new_population.append(child)
         population = new_population

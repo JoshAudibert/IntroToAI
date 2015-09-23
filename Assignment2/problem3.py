@@ -18,20 +18,15 @@ class TowerGA(GeneticAlgorithm):
 
     # Determine if there are two pieces at the same level
     # or if the tower is missing a level
-    def checkTower(self, child)
+    def checkTower(self, child):
 
         checkList = [0] * len(child)
-        for i in range(len(child))
+        for i in range(len(child)):
             if child[i]:
                 if checkList[child[i]-1]:
                     child[i] = 0
                 else:
                     checkList[child[i]-1] = 1
-
-        return child
-        
-
-#add found nums to list of al zero   turn index 1 on on for 1
 
         return child
 
@@ -62,7 +57,7 @@ class TowerGA(GeneticAlgorithm):
         # score assuming no violations
         base_score = num_pieces * num_pieces - tower_cost
         
-        tower = [0 for x in range(num_pieces)]
+        tower = [0 for x in range(len(self.pieces))]
         for i in range(len(child)):
             if child[i] > 0:
                 tower[child[i]] = self.pieces[i]

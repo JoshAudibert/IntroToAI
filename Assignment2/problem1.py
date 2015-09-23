@@ -91,4 +91,10 @@ class AddingGA(GeneticAlgorithm):
     def str_phenotype(self, child):
         return self.filter_traits(child)
 
+    def score(self, child):
+    	total = sum(child)
+    	if total > self.goalVal:
+    		return 0
+    	return total
+
 

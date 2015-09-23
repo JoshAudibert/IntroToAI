@@ -87,7 +87,6 @@ def runGA(ga):
             new_population.append(child)
         population = new_population
         if time.time() >= timeAllowed + start_time:
-        	print (time.time() - start_time)
         	done = True
 
     print "*** Best solution"

@@ -26,4 +26,8 @@ class GeneticAlgorithm:
 
     @abc.abstractmethod
     def str_phenotype(self, child):
-        """Implemetn this per puzzle"""
+        """Implement this per puzzle"""
+
+    @abc.abstractmethod
+    def score(self, child):
+        """Implement this per puzzle"""

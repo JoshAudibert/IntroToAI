@@ -61,14 +61,7 @@ class BinGA(GeneticAlgorithm):
         return population
 
     def fitnessFn(self, child):
-        b_one = 1
-        b_two = 0
-        for i in range(len(child)):
-            if child[i] == 1:
-                b_one *= self.traits[i]
-            elif child[i] == 2:
-                b_two += self.traits[i]
-        return b_one + b_two
+        return self.score(child)
 
 
     # return the list of numbers that the child represents
@@ -128,4 +121,14 @@ class BinGA(GeneticAlgorithm):
 
     def str_phenotype(self, child):
         return "%s\nFitness: %s" % (str(self.filter_traits(child)), self.fitnessFn(child))
+
+    def score(self, child):
+    	b_one = 1
+        b_two = 0
+        for i in range(len(child)):
+            if child[i] == 1:
+                b_one *= self.traits[i]
+            elif child[i] == 2:
+                b_two += self.traits[i]
+        return b_one + b_two
 

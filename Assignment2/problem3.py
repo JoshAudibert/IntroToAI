@@ -17,29 +17,28 @@ class towerPiece:
 class TowerGA(GeneticAlgorithm):
     def __init__(self, pieces):
         # initialize population
+        self.POP_SIZE = 20
         self.pieces = list(pieces)
 
     # Determine if there are two pieces at the same level
     # or if the tower is missing a level
     def checkTower(self, child):
-
-        checkList = [0] * len(child)
+        checkList = [0] * (len(self.pieces) + 1)
         for i in range(len(child)):
             if child[i]:
-                if checkList[child[i]-1]:
+                if checkList[child[i]]:
                     child[i] = 0
                 else:
-                    checkList[child[i]-1] = 1
+                    checkList[child[i]] = 1
         return child
 
     def generatePopulation(self):
-        POP_SIZE = 20
         population = []
-        while(len(population) < POP_SIZE):
+        while(len(population) < self.POP_SIZE):
             tower_size = random.randint(1,len(self.pieces))
-            tower = [0 for x in range(len(self.pieces))]
-            pieces_left = [1 for x in range(len(self.pieces))]
-            for i in range(tower_size):
+            tower = [0] * len(self.pieces)
+            pieces_left = [1] * len(self.pieces)
+            for i in range(1, tower_size+1): # from 1 to tower_size
                 next_piece = 0
                 while next_piece == 0:
                     next_index = random.randint(0,len(self.pieces)-1)
@@ -50,57 +49,21 @@ class TowerGA(GeneticAlgorithm):
         return population
     
     def fitnessFn(self, child):
+    	if(child.count(0) == len(child)):
+            return 0
+
+        num_broken_rules = self.countBrokenRules(child)
         num_pieces = 0
         tower_cost = 0
-        
-        if(child.count(0) == len(child)):
-            return 0
-            
         for i in range(len(child)):
-            if child[i] > 0:
-                num_pieces = num_pieces + 1
-                tower_cost = tower_cost + self.pieces[i].cost
-        # score assuming no violations
-        base_score = num_pieces * num_pieces - tower_cost
-        
-        tower = [0 for x in range(len(self.pieces))]
-        for i in range(len(child)):
-            if child[i] > 0:
-                tower[child[i]] = self.pieces[i]
-        
-        for i in range(tower.count(0)):
-            tower.remove(0)
+            if child[i]:
+                num_pieces += 1
+                tower_cost += self.pieces[i].cost
                 
-        fitness_score = base_score
-        
-        # check bottom for door
-        if tower[0].pieceType != "Door":
-            fitness_score = 0.75 * fitness_score
-            
-        # check top for lookout
-        if tower[len(tower) - 1].pieceType != "Lookout":
-            fitness_score = 0.75 * fitness_score
-            
-        # check middle for walls
-        for i in range(1, len(tower) - 1):
-            if tower[i].pieceType != "Wall":
-                fitness_score = 0.75 * fitness_score
-                
-        # check widths of tower pieces
-        current_width = tower[0].width
-        for i in range(1, len(tower)):
-            if tower[i].width < current_width:
-                current_width = tower[i].width
-            elif tower[i].width > current_width:
-                fitness_score = 0.75 * fitness_score
-                
-        #check strengths
-        for i in range(len(tower)):
-            if (len(tower) - i - 1) > tower[i].strength:
-                for j in range((len(tower) - i - 1) - tower[i].strength):
-                    fitness_score = 0.75 * fitness_score
-
-        return fitness_score
+        fitness = 10 + (num_pieces*num_pieces) - tower_cost
+        # scale it down by 3/4 for each rule broken
+        fitness *= 0.75**num_broken_rules 
+        return fitness
 
 	# return the piece that the child represents
     def filter_traits(self, child):
@@ -112,9 +75,6 @@ class TowerGA(GeneticAlgorithm):
     def randomSelection(self, population, fitnessFn):
         # List of child, fitness pairs
         pop_fitnesses = [[child, fitnessFn(child)] for child in population]
-
-        # TODO: maybe put this into the fitnessFn
-
         # since fitness can be negative, need to make things positive for weighted
         # probability
         min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))
@@ -148,14 +108,81 @@ class TowerGA(GeneticAlgorithm):
 
         return better_childa
 
+    #
     def mutate(self, child):
-        flipOne = random.randint(0,len(child)-1)
-        flipTwo = random.randint(0,len(child)-1)
-        while child[flipOne] == child[flipTwo]:
-            flipTwo = random.randint(0,len(child)-1)
-        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+    	non_zero_indices = []
+    	for i in range(len(child)):
+    		if child[i]:
+    			non_zero_indices.append(i)
 
+        flipOne = random.randint(0, len(non_zero_indices)-1)
+        flipTwo = random.randint(0, len(non_zero_indices)-1)
+        while child[flipOne] == child[flipTwo]:
+            flipTwo = random.randint(0, len(non_zero_indices)-1)
+
+        # switch pieces
+        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+        #child = self.checkTower(child)
         return child
+
 
     def str_phenotype(self, child):
             return self.filter_traits(child)
+
+
+    def countBrokenRules(self, child):
+    	num_broken_rules = 0
+
+		# build tower
+        tower = [0] * len(self.pieces)
+        for i in range(len(child)):
+            if child[i]:
+                tower[child[i]-1] = self.pieces[i]
+        
+        # remove zeros
+        tower = filter(lambda z: z != 0, tower)
+        
+        # check bottom for door
+        if tower[0].pieceType != "Door":
+            num_broken_rules += 1
+            
+        # check top for lookout
+        if tower[-1].pieceType != "Lookout":
+            num_broken_rules += 1
+            
+        # check middle for walls
+        for i in range(1, len(tower)-1):
+            if tower[i].pieceType != "Wall":
+                num_broken_rules += 1
+                
+        # check widths of tower pieces
+        current_width = tower[0].width
+        for i in range(1, len(tower)):
+            if tower[i].width <= current_width:
+                current_width = tower[i].width
+            else:
+                num_broken_rules += 1
+                
+        # check strengths
+        for i in range(len(tower)):
+            if (len(tower)-1 - i) > tower[i].strength:
+            	num_broken_rules += 1
+                # for j in range((len(tower)-1 - i) - tower[i].strength):
+                #     fitness_score = 0.75 * fitness_score
+        return num_broken_rules
+
+
+    def score(self, child):    
+        num_broken_rules = countBrokenRules(child)
+        if num_broken_rules > 0:
+        	return 0
+            
+        num_pieces = 0
+        tower_cost = 0
+        for i in range(len(child)):
+            if child[i]:
+                num_pieces += 1
+                tower_cost += self.pieces[i].cost
+
+        score = 10 + (num_pieces*num_pieces) - tower_cost
+        return score

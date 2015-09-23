@@ -173,7 +173,7 @@ class TowerGA(GeneticAlgorithm):
 
 
     def score(self, child):    
-        num_broken_rules = countBrokenRules(child)
+        num_broken_rules = self.countBrokenRules(child)
         if num_broken_rules > 0:
             return 0
             

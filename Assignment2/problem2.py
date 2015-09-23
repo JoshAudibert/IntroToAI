@@ -48,7 +48,6 @@ class BinGA(GeneticAlgorithm):
 
         return child
 
-
     def generatePopulation(self):
         POP_SIZE = 10
         population = []
@@ -62,7 +61,6 @@ class BinGA(GeneticAlgorithm):
 
     def fitnessFn(self, child):
         return self.score(child)
-
 
     # return the list of numbers that the child represents
     def filter_traits(self, child):
@@ -123,7 +121,7 @@ class BinGA(GeneticAlgorithm):
         return "%s\nFitness: %s" % (str(self.filter_traits(child)), self.fitnessFn(child))
 
     def score(self, child):
-    	b_one = 1
+        b_one = 1
         b_two = 0
         for i in range(len(child)):
             if child[i] == 1:

@@ -92,9 +92,9 @@ class AddingGA(GeneticAlgorithm):
         return self.filter_traits(child)
 
     def score(self, child):
-    	total = sum(child)
-    	if total > self.goalVal:
-    		return 0
-    	return total
+        total = sum(child)
+        if total > self.goalVal:
+            return 0
+        return total
 
 

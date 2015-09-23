@@ -35,7 +35,7 @@ class TowerGA(GeneticAlgorithm):
     def generatePopulation(self):
         population = []
         piece_used = [0] * len(self.pieces)
-        while(len(population) < self.POP_SIZE):
+        while len(population) < self.POP_SIZE:
             tower_size = random.randint(1,len(self.pieces))
             tower = [0] * len(self.pieces)
             pieces_left = [1] * len(self.pieces)
@@ -54,7 +54,7 @@ class TowerGA(GeneticAlgorithm):
         return population
     
     def fitnessFn(self, child):
-        if(child.count(0) == len(child)):
+        if child.count(0) == len(child):
             return 0
 
         num_broken_rules = self.countBrokenRules(child)

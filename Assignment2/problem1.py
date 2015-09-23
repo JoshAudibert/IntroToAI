@@ -80,11 +80,12 @@ class AddingGA(GeneticAlgorithm):
 
     # flips a random input integer from on or off
     def mutate(self, child):
-        flip = random.randint(len(child))
+        flip = random.randint(0, len(child)-1)
         if child[flip] == 1:
             child[flip] = 0
         else:
             child[flip] = 1
+        return child
 
     # returns the list of numbers that represents the child
     def str_phenotype(self, child):

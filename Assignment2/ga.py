@@ -2,6 +2,7 @@ from problem1 import AddingGA
 from problem2 import BinGA
 from problem3 import TowerGA
 from problem3 import towerPiece
+import random
 import time
 import sys
 
@@ -12,17 +13,13 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     # create GeneticAlgorithm based on puzzleNum
     if puzzleNum == 1:
-        ga = AddingGA(11, [1,2,3,5,7])
-
+        ga = AddingGA(11, [2,3,5,7])
     elif puzzleNum == 2:
-
         lines = f.read().splitlines()
         int_list = [int(i) for i in lines]
         # Add list to new genetic algorithm
         ga = BinGA(lint_list)
-        
     elif puzzleNum == 3:
-
         # Read in all numbers from the file
         lines = f.read().splitlines()
         pieces = list()
@@ -45,26 +42,26 @@ def parseInput(puzzleNum, inputfile, timeLimit):
     return ga
 
 def runGA(ga):
+	# set up initial population
     population = ga.generatePopulation()
-    # set up population
-    # fitnessFn
-    # time = 0
+
+    # set initial variables
     timeAllowed = 2
     mutation_prob = .001
     done = False
     numGens = 1
     start_time = time.time()
+
     while not done:
         new_population = []
         numGens += 1
         for x in range(len(population)):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
-            # potentially temporarily remove parent_x from population so parent_y isn't also parent_x
+            # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
             parent_y = ga.randomSelection(population, ga.fitnessFn)
             child = ga.reproduce(parent_x, parent_y)
-            #if random.random() <= mutation_prob:
-
-            #   child = ga.mutate(child)
+            if random.random() <= mutation_prob:
+				child = ga.mutate(child)
 
             new_population.append(child)
         population = new_population
@@ -83,12 +80,7 @@ def runGA(ga):
     print ga.str_phenotype(population[fit_index])
     print "Number of generations: " + str(numGens)
 
-    
-    print population[fit_index]
-    print ga.str_phenotype(population[fit_index])
 
-sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1000]
-    #sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
     # Command line format: ga.py puzzle# filename timeLimit
@@ -99,6 +91,6 @@ def main():
     runGA(ga)
     
 
-sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
+sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1000]
 if __name__ == "__main__":
     main()

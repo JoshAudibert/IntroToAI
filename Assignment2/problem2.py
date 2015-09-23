@@ -45,8 +45,6 @@ class BinGA(GeneticAlgorithm):
                         child[i] = 2
                         bc_two += 1
 
-
-
     def generatePopulation(self):
         POP_SIZE = 20
         population = []
@@ -69,7 +67,19 @@ class BinGA(GeneticAlgorithm):
         return sum(b_one, b_two)
 
     def randomSelection(self, population, fitnessFn):
-        pass
+        # List of child, fitness pairs
+        pop_fitnesses = [[child, fitnessFn(child)] for child in population]
+
+        # TODO: maybe put this into the fitnessFn
+
+        total = sum(pop_fitness[1] for pop_fitness in pop_fitnesses)
+        rand = random.uniform(0, total)
+        cumul_sum = 0
+        # finds which fitness range the rand fell into
+        for child, pop_fitness in pop_fitnesses:
+            if rand < cumul_sum + pop_fitness:
+                return child
+            cumul_sum += pop_fitness
 
     def reproduce(self, parent_x, parent_y):
         # generate a split index

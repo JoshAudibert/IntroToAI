@@ -43,10 +43,6 @@ class TowerGA(GeneticAlgorithm):
 
     def mutate(self, child):
         pass
-<<<<<<< HEAD
-=======
 
     def str_phenotype(self, child):
             return self.filter_traits(child)
->>>>>>> e2dad6c1b07c0e3686b304887afce90d9de5554f
-

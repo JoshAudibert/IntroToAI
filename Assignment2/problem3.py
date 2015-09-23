@@ -124,7 +124,7 @@ class TowerGA(GeneticAlgorithm):
 
         # if all zeros or only one piece
         if len(non_zero_indices) <= 1:
-            child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces)+1)
+            child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces))
             return child
 
         flipOne = random.randint(0, len(non_zero_indices)-1)

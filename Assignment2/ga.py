@@ -23,9 +23,12 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     elif puzzleNum == 2:
         lines = f.read().splitlines()
-        int_list = [int(i) for i in lines]
+        float_list = [float(i) for i in lines]
         # Add list to new genetic algorithm
-        ga = BinGA(lint_list)
+        ga = BinGA(float_list)
+
+        print float_list
+        
     elif puzzleNum == 3:
         # Read in all numbers from the file
         lines = f.read().splitlines()
@@ -60,12 +63,14 @@ def runGA(ga):
     start_time = time.time()
 
     while not done:
+        print population
         new_population = []
         numGens += 1
         for x in range(len(population)):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
             # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
             parent_y = ga.randomSelection(population, ga.fitnessFn)
+            print parent_x, parent_y
             child = ga.reproduce(parent_x, parent_y)
             if random.random() <= mutation_prob:
                 child = ga.mutate(child)
@@ -97,7 +102,7 @@ def main():
     ga = parseInput(puzzleNum, filename, timeLimit)
     runGA(ga)
     
-sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1000]
+sys.argv = ['ga.py', 2, 'problem2_test1.txt', 1000]
 
 if __name__ == "__main__":
     main()

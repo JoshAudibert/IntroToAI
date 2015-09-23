@@ -15,35 +15,38 @@ class BinGA(GeneticAlgorithm):
         bc_three = 0
         for i in range(len(child)):
             if child[i] == 1:
-                if bc_one < 10:
+                if bc_one < 2:
                     bc_one += 1
                 else:
-                    if bc_two < 10:
+                    if bc_two < 2:
                         child[i] = 2
                         bc_two += 1
                     else:
                         child[i] = 3
                         bc_three += 1
             elif child[i] == 2:
-                if bc_two < 10:
+                if bc_two < 2:
                     bc_two += 1
                 else:
-                    if bc_one < 10:
+                    if bc_one < 2:
                         child[i] = 1
                         bc_one += 1
                     else:
                         child[i] = 3
                         bc_three += 1
             else:
-                if bc_three < 10:
+                if bc_three < 2:
                     bc_three += 1
                 else:
-                    if bc_one < 10:
+                    if bc_one < 2:
                         child[i] = 1
                         bc_one += 1
                     else:
                         child[i] = 2
                         bc_two += 1
+
+        return child
+
 
     def generatePopulation(self):
         POP_SIZE = 20
@@ -51,9 +54,9 @@ class BinGA(GeneticAlgorithm):
         for i in range(POP_SIZE):
             individual = []
             for j in range(len(self.traits)):
-                individual.append(random.randint(1,2,3))
+                individual.append(random.randint(1,3))
+            individual = self.binCheck(individual)
             population.append(individual)
-            self.binCheck(self, population)
         return population
 
     def fitnessFn(self, child):
@@ -64,7 +67,16 @@ class BinGA(GeneticAlgorithm):
                 b_one *= self.traits[i]
             elif child[i] == 2:
                 b_two += self.traits[i]
-        return sum(b_one, b_two)
+        return b_one + b_two
+
+
+    # return the list of numbers that the child represents
+    def filter_traits(self, child):
+        filtered = []
+        for i in range(len(self.traits)):
+            filtered.append([self.traits[i], child[i]])
+
+        return filtered
 
     def randomSelection(self, population, fitnessFn):
         # List of child, fitness pairs
@@ -72,14 +84,18 @@ class BinGA(GeneticAlgorithm):
 
         # TODO: maybe put this into the fitnessFn
 
-        total = sum(pop_fitness[1] for pop_fitness in pop_fitnesses)
+        # since fitness can be negative, need to make things positive for weighted
+        # probability
+        min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))
+        norm_fitnesses = [[child, fitness + min_fit + 1] for child, fitness in pop_fitnesses]
+        total = sum(fitness for child, fitness in norm_fitnesses)
         rand = random.uniform(0, total)
         cumul_sum = 0
         # finds which fitness range the rand fell into
-        for child, pop_fitness in pop_fitnesses:
-            if rand < cumul_sum + pop_fitness:
+        for child, fitness in norm_fitnesses:
+            if rand < cumul_sum + fitness:
                 return child
-            cumul_sum += pop_fitness
+            cumul_sum += fitness
 
     def reproduce(self, parent_x, parent_y):
         # generate a split index
@@ -96,14 +112,18 @@ class BinGA(GeneticAlgorithm):
         child_a = x_left + y_right
         child_b = y_left + x_right
 
+        better_childa = self.binCheck(child_a)
+        better_childb = self.binCheck(child_b)
+        return better_childa
+
     def mutate(self, child):
-        flipOne = random.randint(len(child))
-        flipTwo = random.randint(len(child))
-        valueOne = 0
-        ValueTwo = 0
+        flipOne = random.randint(0,len(child)-1)
+        flipTwo = random.randint(0,len(child)-1)
         while child[flipOne] == child[flipTwo]:
-            flipTwo = random.randint(len(child))
+            flipTwo = random.randint(0,len(child)-1)
         child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+
+        return child
 
     def str_phenotype(self, child):
         return self.filter_traits(child)

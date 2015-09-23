@@ -84,13 +84,52 @@ class TowerGA(GeneticAlgorithm):
         return fitness_score
 
     def randomSelection(self, population, fitnessFn):
-        pass
+        # List of child, fitness pairs
+        pop_fitnesses = [[child, fitnessFn(child)] for child in population]
+
+        # TODO: maybe put this into the fitnessFn
+
+        # since fitness can be negative, need to make things positive for weighted
+        # probability
+        min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))
+        norm_fitnesses = [[child, fitness + min_fit + 1] for child, fitness in pop_fitnesses]
+        total = sum(fitness for child, fitness in norm_fitnesses)
+        rand = random.uniform(0, total)
+        cumul_sum = 0
+        # finds which fitness range the rand fell into
+        for child, fitness in norm_fitnesses:
+            if rand < cumul_sum + fitness:
+                return child
+            cumul_sum += fitness
 
     def reproduce(self, parent_x, parent_y):
-        pass
+        # generate a split index
+        # print len(parent_x)
+        split = random.randint(1, len(parent_x) - 1)
+
+        # generate the sub-lists from the split
+        x_left = list(parent_x[0:split])
+        x_right = list(parent_x[split:])
+        y_left = list(parent_y[0:split])
+        y_right = list(parent_y[split:])
+
+        # merge the sub-lists to create children
+        child_a = x_left + y_right
+        child_b = y_left + x_right
+
+        better_childa = self.checkTower(child_a)
+        better_childb = self.checkTower(child_b)
+
+        return better_childa
 
     def mutate(self, child):
-        pass
+        flipOne = random.randint(0,len(child)-1)
+        flipTwo = random.randint(0,len(child)-1)
+        while child[flipOne] == child[flipTwo]:
+            flipTwo = random.randint(0,len(child)-1)
+        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+
+        return child
 
     def str_phenotype(self, child):
             return self.filter_traits(child)

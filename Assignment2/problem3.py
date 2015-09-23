@@ -1,4 +1,5 @@
 from ga_abstract import GeneticAlgorithm
+import random
 
 # Artificial Intelligence Assignment 2 Problem 3
 
@@ -20,7 +21,7 @@ class TowerGA(GeneticAlgorithm):
         population = []
         while(len(population) < POP_SIZE):
             tower_size = random.randint(1,len(self.pieces))
-            tower = [0 for x in range(tower_size)]
+            tower = [0 for x in range(len(self.pieces))]
             pieces_left = [1 for x in range(len(self.pieces))]
             for i in range(tower_size):
                 next_piece = 0
@@ -28,11 +29,12 @@ class TowerGA(GeneticAlgorithm):
                     next_index = random.randint(0,len(self.pieces)-1)
                     next_piece = pieces_left[next_index]
                     pieces_left[next_index] = 0
-                tower[i] = next_index
+                tower[next_index] = i
             population.append(tower)
         return population
     
     def fitnessFn(self, child):
+        
         pass
 
     def randomSelection(self, population, fitnessFn):

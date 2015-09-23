@@ -91,6 +91,6 @@ def main():
     runGA(ga)
     
 
-sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1000]
+sys.argv = ['ga.py', 2, 'problem2_test1.txt', 1000]
 if __name__ == "__main__":
     main()

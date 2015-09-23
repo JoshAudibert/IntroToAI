@@ -5,10 +5,10 @@ from ga_abstract import GeneticAlgorithm
 # class that holds the map information
 class towerPiece:
     def __init__(self, pieceType, width, strength, cost):
-        self.pieceType = startCoords
-        self.width = goalCoords
-        self.strength = terrainMap 
-        self.cost = selHeuristic 
+        self.pieceType = pieceType
+        self.width = width
+        self.strength = strength 
+        self.cost = cost 
 
 class TowerGA(GeneticAlgorithm):
     def __init__(self, pieces):
@@ -43,4 +43,10 @@ class TowerGA(GeneticAlgorithm):
 
     def mutate(self, child):
         pass
+<<<<<<< HEAD
+=======
+
+    def str_phenotype(self, child):
+            return self.filter_traits(child)
+>>>>>>> e2dad6c1b07c0e3686b304887afce90d9de5554f
 

@@ -34,8 +34,54 @@ class TowerGA(GeneticAlgorithm):
         return population
     
     def fitnessFn(self, child):
+        num_pieces = 0
+        tower_cost = 0
+        for i in range(len(child)):
+            if child[i] > 0:
+                num_pieces = num_pieces + 1
+                tower_cost = tower_cost + self.pieces[i].cost
+        # score assuming no violations
+        base_score = num_pieces * num_pieces - tower_cost
         
-        pass
+        tower = [0 for x in range(num_pieces)]
+        for i in range(len(child)):
+            if child[i] > 0:
+                tower[child[i]] = self.pieces[i]
+        
+        for i in range(len(tower)):
+            if tower[i] == 0:
+                tower.pop(i)
+                
+        fitness_score = base_score
+        
+        # check bottom for door
+        if tower[0].pieceType != "door":
+            fitness_score = 0.75 * fitness_score
+            
+        # check top for lookout
+        if tower[len(tower) - 1].pieceType != "lookout":
+            fitness_score = 0.75 * fitness_score
+            
+        # check middle for walls
+        for i in range(1, len(tower) - 1):
+            if tower[i].pieceType != "wall":
+                fitness_score = 0.75 * fitness_score
+                
+        # check widths of tower pieces
+        current_width = tower[0].width
+        for i in range(1, len(tower)):
+            if tower[i].width < current_width:
+                current_width = tower[i].width
+            elif tower[i].width > current_width:
+                fitness_score = 0.75 * fitness_score
+                
+        #check strengths
+        for i in range(len(tower)):
+            if (len(tower) - i - 1) > tower[i].strength:
+                for j in range((len(tower) - i - 1) - tower[i].strength):
+                    fitness_score = 0.75 * fitness_score
+
+        return fitness_score
 
     def randomSelection(self, population, fitnessFn):
         pass

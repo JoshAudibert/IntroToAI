@@ -34,12 +34,12 @@ def parseInput(puzzleNum, inputfile, timeLimit):
         lines = f.read().splitlines()
         pieces = list()
 
-        for count in xrange(len(lines)):
-            nums = lines[count].split()
-            pieceType = nums[0].replace(',', '')
-            width = int(nums[1].replace(',', ''))
-            strength = int(nums[2].replace(',', ''))
-            cost = int(nums[3].replace(',', ''))
+        for line in lines:
+            nums = line.split(', ')
+            pieceType = nums[0]
+            width = int(nums[1])
+            strength = int(nums[2])
+            cost = int(nums[3])
             currPiece = towerPiece(pieceType, width, strength, cost)
             pieces.append(currPiece)
 
@@ -105,7 +105,7 @@ def main():
     ga = parseInput(puzzleNum, filename, timeLimit)
     runGA(ga)
     
-sys.argv = ['ga.py', 2, 'problem2_test1.txt', 1000]
+sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
 
 if __name__ == "__main__":
     main()

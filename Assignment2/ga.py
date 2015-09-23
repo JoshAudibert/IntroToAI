@@ -59,19 +59,20 @@ def runGA(ga):
     #   print population[i]
 
     # set initial variables
-    timeAllowed = 2
-    mutation_prob = .01
+    timeAllowed = 4
+    mutation_prob = .05
     done = False
     numGens = 1
     start_time = time.time()
     best_individual = population[0]
-    best_fit = ga.fitnessFn(best_individual)
+    best_score = ga.score(best_individual)
+    best_gen = 1
 
     while not done:
     	# look for new best fitness
     	for individual in population:
-	        if(ga.fitnessFn(individual) > best_fit):
-	            best_fit = ga.fitnessFn(individual)
+	        if(ga.score(individual) > best_score):
+	            best_score = ga.score(individual)
 	            best_individual = individual
 	            best_gen = numGens
         new_population = []
@@ -91,6 +92,9 @@ def runGA(ga):
 
     print "*** Best solution"
     print "Individual: ", ga.str_phenotype(best_individual)
+    #print "Num Broken rules: ", ga.countBrokenRules(best_individual)
+    print "Score: ", best_score
+    #print "Fitness: ", ga.fitnessFn(best_individual)
     print "Generation found: ", best_gen
     print "Number of generations: " + str(numGens)
 

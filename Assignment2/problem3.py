@@ -34,6 +34,7 @@ class TowerGA(GeneticAlgorithm):
 
     def generatePopulation(self):
         population = []
+        piece_used = [0] * len(self.pieces)
         while(len(population) < self.POP_SIZE):
             tower_size = random.randint(1,len(self.pieces))
             tower = [0] * len(self.pieces)
@@ -45,7 +46,11 @@ class TowerGA(GeneticAlgorithm):
                     next_piece = pieces_left[next_index]
                     pieces_left[next_index] = 0
                 tower[next_index] = i
-            population.append(tower)
+                piece_used[i-1] = 1
+
+            if len(population) != self.POP_SIZE-1 or sum(piece_used) == len(self.pieces):
+                population.append(tower)
+
         return population
     
     def fitnessFn(self, child):
@@ -68,9 +73,11 @@ class TowerGA(GeneticAlgorithm):
 	# return the piece that the child represents
     def filter_traits(self, child):
         filtered = []
-        for i in range(len(self.pieces)):
-            filtered.append(str(self.pieces[i]))
+        for i in range(len(child)):
+            if child[i]:
+                filtered.append(str(self.pieces[i]))
         return filtered
+
 
     def randomSelection(self, population, fitnessFn):
         # List of child, fitness pairs
@@ -103,10 +110,10 @@ class TowerGA(GeneticAlgorithm):
         child_a = x_left + y_right
         child_b = y_left + x_right
 
-        better_childa = self.checkTower(child_a)
-        better_childb = self.checkTower(child_b)
+        better_child_a = self.checkTower(child_a)
+        better_child_b = self.checkTower(child_b)
 
-        return better_childa
+        return better_child_a
 
     #
     def mutate(self, child):
@@ -141,6 +148,9 @@ class TowerGA(GeneticAlgorithm):
         
         # remove zeros
         tower = filter(lambda z: z != 0, tower)
+
+        if len(tower) == 0:
+            return 2
         
         # check bottom for door
         if tower[0].pieceType != "Door":
@@ -173,7 +183,7 @@ class TowerGA(GeneticAlgorithm):
 
 
     def score(self, child):    
-        num_broken_rules = countBrokenRules(child)
+        num_broken_rules = self.countBrokenRules(child)
         if num_broken_rules > 0:
         	return 0
             
@@ -184,5 +194,5 @@ class TowerGA(GeneticAlgorithm):
                 num_pieces += 1
                 tower_cost += self.pieces[i].cost
 
-        score = 10 + (num_pieces*num_pieces) - tower_cost
+        score = 10 + (num_pieces**2) - tower_cost
         return score

@@ -69,21 +69,33 @@ class BinGA(GeneticAlgorithm):
                 b_two += self.traits[i]
         return b_one + b_two
 
+
+    # return the list of numbers that the child represents
+    def filter_traits(self, child):
+        filtered = []
+        for i in range(len(self.traits)):
+            filtered.append([self.traits[i], child[i]])
+
+        return filtered
+
     def randomSelection(self, population, fitnessFn):
         # List of child, fitness pairs
         pop_fitnesses = [[child, fitnessFn(child)] for child in population]
 
         # TODO: maybe put this into the fitnessFn
 
-        total = sum(fitness for child, fitness in pop_fitnesses)
-        print "total: " + str(total)
+        # since fitness can be negative, need to make things positive for weighted
+        # probability
+        min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))
+        norm_fitnesses = [[child, fitness + min_fit + 1] for child, fitness in pop_fitnesses]
+        total = sum(fitness for child, fitness in norm_fitnesses)
         rand = random.uniform(0, total)
         cumul_sum = 0
         # finds which fitness range the rand fell into
-        for child, pop_fitness in pop_fitnesses:
-            if rand < cumul_sum + pop_fitness:
+        for child, fitness in norm_fitnesses:
+            if rand < cumul_sum + fitness:
                 return child
-            cumul_sum += pop_fitness
+            cumul_sum += fitness
 
     def reproduce(self, parent_x, parent_y):
         # generate a split index

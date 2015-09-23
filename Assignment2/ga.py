@@ -54,6 +54,9 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 def runGA(ga):
     # set up initial population
     population = ga.generatePopulation()
+    
+    #for i in range(len(population)):
+    #   print population[i]
 
     # set initial variables
     timeAllowed = 2

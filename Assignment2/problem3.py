@@ -50,6 +50,10 @@ class TowerGA(GeneticAlgorithm):
     def fitnessFn(self, child):
         num_pieces = 0
         tower_cost = 0
+        
+        if(child.count(0) == len(child)):
+            return 0
+            
         for i in range(len(child)):
             if child[i] > 0:
                 num_pieces = num_pieces + 1
@@ -68,16 +72,16 @@ class TowerGA(GeneticAlgorithm):
         fitness_score = base_score
         
         # check bottom for door
-        if tower[0].pieceType != "door":
+        if tower[0].pieceType != "Door":
             fitness_score = 0.75 * fitness_score
             
         # check top for lookout
-        if tower[len(tower) - 1].pieceType != "lookout":
+        if tower[len(tower) - 1].pieceType != "Lookout":
             fitness_score = 0.75 * fitness_score
             
         # check middle for walls
         for i in range(1, len(tower) - 1):
-            if tower[i].pieceType != "wall":
+            if tower[i].pieceType != "Wall":
                 fitness_score = 0.75 * fitness_score
                 
         # check widths of tower pieces

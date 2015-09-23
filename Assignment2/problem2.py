@@ -112,7 +112,9 @@ class BinGA(GeneticAlgorithm):
         child_a = x_left + y_right
         child_b = y_left + x_right
 
-        return child_a
+        better_childa = self.binCheck(child_a)
+        better_childb = self.binCheck(child_b)
+        return better_childa
 
     def mutate(self, child):
         flipOne = random.randint(0,len(child)-1)

@@ -16,6 +16,25 @@ class TowerGA(GeneticAlgorithm):
         # initialize population
         self.pieces = list(pieces)
 
+    # Determine if there are two pieces at the same level
+    # or if the tower is missing a level
+    def checkTower(self, child)
+
+        checkList = [0] * len(child)
+        for i in range(len(child))
+            if child[i]:
+                if checkList[child[i]-1]:
+                    child[i] = 0
+                else:
+                    checkList[child[i]-1] = 1
+
+        return child
+        
+
+#add found nums to list of al zero   turn index 1 on on for 1
+
+        return child
+
     def generatePopulation(self):
         POP_SIZE = 20
         population = []
@@ -103,33 +122,10 @@ class TowerGA(GeneticAlgorithm):
             cumul_sum += fitness
 
     def reproduce(self, parent_x, parent_y):
-        # generate a split index
-        # print len(parent_x)
-        split = random.randint(1, len(parent_x) - 1)
-
-        # generate the sub-lists from the split
-        x_left = list(parent_x[0:split])
-        x_right = list(parent_x[split:])
-        y_left = list(parent_y[0:split])
-        y_right = list(parent_y[split:])
-
-        # merge the sub-lists to create children
-        child_a = x_left + y_right
-        child_b = y_left + x_right
-
-        better_childa = self.checkTower(child_a)
-        better_childb = self.checkTower(child_b)
-
-        return better_childa
+        pass
 
     def mutate(self, child):
-        flipOne = random.randint(0,len(child)-1)
-        flipTwo = random.randint(0,len(child)-1)
-        while child[flipOne] == child[flipTwo]:
-            flipTwo = random.randint(0,len(child)-1)
-        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
-
-        return child
+        pass
 
     def str_phenotype(self, child):
             return self.filter_traits(child)

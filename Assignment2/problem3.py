@@ -11,6 +11,9 @@ class towerPiece:
         self.strength = strength 
         self.cost = cost 
 
+    def __str__(self):
+    	return "%s, %d, %d, %d" % (self.pieceType, self.width, self.strength, self.cost)
+
 class TowerGA(GeneticAlgorithm):
     def __init__(self, pieces):
         # initialize population
@@ -98,6 +101,13 @@ class TowerGA(GeneticAlgorithm):
                     fitness_score = 0.75 * fitness_score
 
         return fitness_score
+
+	# return the piece that the child represents
+    def filter_traits(self, child):
+        filtered = []
+        for i in range(len(self.pieces)):
+            filtered.append(str(self.pieces[i]))
+        return filtered
 
     def randomSelection(self, population, fitnessFn):
         # List of child, fitness pairs

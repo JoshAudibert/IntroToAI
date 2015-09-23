@@ -12,7 +12,13 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     # create GeneticAlgorithm based on puzzleNum
     if puzzleNum == 1:
-        ga = AddingGA(11, [1,2,3,5,7])
+
+        lines = f.read().splitlines()
+        int_list = [int(i) for i in lines]
+        # First number is the target number
+        targetNum = int(int_list.pop(0))
+        # Add list and target number to new genetic algorithm
+        ga = AddingGA(targetNum, int_list)
 
     elif puzzleNum == 2:
 
@@ -99,6 +105,6 @@ def main():
     runGA(ga)
     
 
-sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
+#sys.argv = ['ga.py', 1, 'Test1.txt', 1000]
 if __name__ == "__main__":
     main()

@@ -55,9 +55,6 @@ def parseInput(puzzleNum, inputfile):
 def runGA(ga, timeLimit):
     # set up initial population
     population = ga.generatePopulation()
-    
-    #for i in range(len(population)):
-    #   print population[i]
 
     # set initial variables
     timeAllowed = timeLimit
@@ -84,10 +81,8 @@ def runGA(ga, timeLimit):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
             # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
             parent_y = ga.randomSelection(population, ga.fitnessFn)
-            print parent_x, parent_y, numGens
             child = ga.reproduce(parent_x, parent_y)
             if random.random() <= mutation_prob:
-                print "Mutating"
                 child = ga.mutate(child)
             new_population.append(child)
        

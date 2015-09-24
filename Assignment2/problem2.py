@@ -91,7 +91,6 @@ class BinGA(GeneticAlgorithm):
 
     def reproduce(self, parent_x, parent_y):
         # generate a split index
-        # print len(parent_x)
         split = random.randint(1, len(parent_x) - 1)
 
         # generate the sub-lists from the split

@@ -148,10 +148,7 @@ class TowerGA(GeneticAlgorithm):
         tower = [0] * len(self.pieces)
         for i in range(len(child)):
             if child[i]:
-                try:
-                    tower[child[i]-1] = self.pieces[i]
-                except:
-                    import ipdb; ipdb.set_trace()
+                tower[child[i]-1] = self.pieces[i]
         
         # remove zeros
         tower = filter(lambda z: z != 0, tower)

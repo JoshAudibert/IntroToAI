@@ -97,7 +97,6 @@ class TowerGA(GeneticAlgorithm):
 
     def reproduce(self, parent_x, parent_y):
         # generate a split index
-        # print len(parent_x)
         split = random.randint(1, len(parent_x) - 1)
 
         # generate the sub-lists from the split
@@ -131,7 +130,6 @@ class TowerGA(GeneticAlgorithm):
         childCopy = list(child)
         del childCopy[flipOne]
         flipTwo = random.randint(0, len(childCopy)-1)
-        print childCopy, child, child[flipOne], child[flipTwo]
 
         # switch pieces
         child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]

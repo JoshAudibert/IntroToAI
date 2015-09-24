@@ -63,6 +63,8 @@ def runGA(ga):
     mutation_prob = .05
     done = False
     numGens = 1
+    num_cull = 3
+    num_elite = 3
     start_time = time.time()
     best_individual = population[0]
     best_score = ga.score(best_individual)
@@ -77,7 +79,7 @@ def runGA(ga):
 	            best_gen = numGens
         new_population = []
         numGens += 1
-        for x in range(len(population)):
+        for x in range(len(population) + num_cull - num_elite):
             parent_x = ga.randomSelection(population, ga.fitnessFn)
             # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
             parent_y = ga.randomSelection(population, ga.fitnessFn)
@@ -87,7 +89,15 @@ def runGA(ga):
                 print "Mutating"
                 child = ga.mutate(child)
             new_population.append(child)
+       
+        if num_elite > 0:
+            new_population.extend(ga.getElites(population, num_elite))
+      
+        if num_cull > 0:
+            ga.cull(new_population, num_cull)
+        
         population = new_population
+        break
         if time.time() >= timeAllowed + start_time:
         	done = True
 
@@ -109,7 +119,7 @@ def main():
     ga = parseInput(puzzleNum, filename, timeLimit)
     runGA(ga)
     
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
+sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1]
 
 if __name__ == "__main__":
     main()

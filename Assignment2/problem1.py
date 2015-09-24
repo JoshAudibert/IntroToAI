@@ -90,9 +90,21 @@ class AddingGA(GeneticAlgorithm):
     # returns the list of numbers that represents the child
     def str_phenotype(self, child):
         return self.filter_traits(child)
+        
+    def cull(self, population, num_cull):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        for i in range(num_cull):
+            population.remove(sorted_pop[len(sorted_pop) - 1 - i])
+            
+    def getElites(self, population, num_elite):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        elites = []
+        for i in range(num_elite):
+            elites.append(sorted_pop[i])
+        return elites
 
     def score(self, child):
-        total = sum(child)
+        total = sum(self.filter_traits(child))
         if total > self.goalVal:
             return 0
         return total

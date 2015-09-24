@@ -36,7 +36,7 @@ def parseInput(puzzleNum, inputfile):
         pieces = list()
 
         for line in lines:
-            nums = line.split(', ')
+            nums = line.split()
             pieceType = nums[0]
             width = int(nums[1])
             strength = int(nums[2])
@@ -128,7 +128,7 @@ def main():
     ga = parseInput(puzzleNum, filename)
     runGA(ga, timeLimit)
     
-sys.argv = ['ga.py', 1, 'problem1_test1.txt', 5]
+sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
 
 if __name__ == "__main__":
     main()

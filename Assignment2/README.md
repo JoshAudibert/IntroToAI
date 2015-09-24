@@ -3,14 +3,18 @@
 NOTE: Python 2.7 was used to write and run this program,
 	it will most likely not run with python 3
 
+NOTE: Test file CANNOT have an extra newline at the end of 
+	the file or the parsing of the file will not work
+
 The program can be run in command line by:
 
-astar.py "Test X.txt" hur_num
+ga.py problem_num "Test X.txt" time_limit
 
 Example running Test 1 with heuristic 4:
 
 astar.py "Test 1.txt" 4
 
-Argv[0]: astar.py
-Argv[1]: which test the program should run
-Argv[2]: integer value from 1 to 6 of which heuristic should be used
+Argv[0]: ga.py
+Argv[1]: which problem to run from 1 to 3
+Argv[2]: which file to test on
+Argv[3] the time limit of the program in seconds

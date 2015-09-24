@@ -92,7 +92,7 @@ def runGA(ga, timeLimit, resultsFile):
                 print "best individual score: ", gen_best
                 print "median individual score: ", gen_median
                 print "worst individual score: ", gen_worst
-                csvwriter.writerow([numGens, gen_best, gen_median, gen_worst])
+                csvwriter.writerow([numGens, gen_best, gen_worst, gen_median])
                 
             numGens += 1
             for x in range(len(population) + num_cull - num_elite):
@@ -133,7 +133,7 @@ def main():
     ga = parseInput(puzzleNum, filename)
     runGA(ga, timeLimit, 'resultsFile.csv')
     
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
+sys.argv = ['ga.py', 3, 'problem3_test3.txt', 20]
 
 if __name__ == "__main__":
     main()

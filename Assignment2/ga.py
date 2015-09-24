@@ -5,6 +5,7 @@ from problem3 import towerPiece
 import random
 import time
 import sys
+import csv
 
 # parse the input differently depending on which problem is being run
 def parseInput(puzzleNum, inputfile):
@@ -52,7 +53,7 @@ def parseInput(puzzleNum, inputfile):
 
     return ga
 
-def runGA(ga, timeLimit):
+def runGA(ga, timeLimit, resultsFile):
     # set up initial population
     population = ga.generatePopulation()
 
@@ -69,54 +70,58 @@ def runGA(ga, timeLimit):
     best_score = ga.score(best_individual)
     best_gen = 1
 
-    while not done:
-        # look for new best fitness
-        for individual in population:
-            if(ga.score(individual) > best_score):
-                best_score = ga.score(individual)
-                best_individual = individual
-                best_gen = numGens
-        new_population = []
-        if numGens % print_gens == 1:
-            sorted_pop = sorted(population, key = ga.score, reverse = True)
-            gen_best = ga.score(sorted_pop[0])
-            gen_median = ga.score(sorted_pop[len(population)//2])
-            gen_worst = ga.score(sorted_pop[len(population)-1])
-                
-            print "Generation Data:"
-            print "number: ", numGens
-            print "best individual score: ", gen_best
-            print "median individual score: ", gen_median
-            print "worst individual score: ", gen_worst
-            
-        numGens += 1
-        for x in range(len(population) + num_cull - num_elite):
-            parent_x = ga.randomSelection(population, ga.fitnessFn)
-            # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
-            parent_y = ga.randomSelection(population, ga.fitnessFn)
-            child = ga.reproduce(parent_x, parent_y)
-            if random.random() <= mutation_prob:
-                child = ga.mutate(child)
-            new_population.append(child)
-       
-        if num_elite > 0:
-            new_population.extend(ga.getElites(population, num_elite))
-      
-        if num_cull > 0:
-            ga.cull(new_population, num_cull)
+    with open(resultsFile, 'wb') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         
-        population = new_population
-        if time.time() >= timeAllowed + start_time:
-            done = True
+        while not done:
+            # look for new best fitness
+            for individual in population:
+                if(ga.score(individual) > best_score):
+                    best_score = ga.score(individual)
+                    best_individual = individual
+                    best_gen = numGens
+            new_population = []
+            if numGens % print_gens == 1:
+                sorted_pop = sorted(population, key = ga.score, reverse = True)
+                gen_best = ga.score(sorted_pop[0])
+                gen_median = ga.score(sorted_pop[len(population)//2])
+                gen_worst = ga.score(sorted_pop[len(population)-1])
+                    
+                print "Generation Data:"
+                print "number: ", numGens
+                print "best individual score: ", gen_best
+                print "median individual score: ", gen_median
+                print "worst individual score: ", gen_worst
+                csvwriter.writerow([numGens, gen_best, gen_median, gen_worst])
+                
+            numGens += 1
+            for x in range(len(population) + num_cull - num_elite):
+                parent_x = ga.randomSelection(population, ga.fitnessFn)
+                # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
+                parent_y = ga.randomSelection(population, ga.fitnessFn)
+                child = ga.reproduce(parent_x, parent_y)
+                if random.random() <= mutation_prob:
+                    child = ga.mutate(child)
+                new_population.append(child)
+           
+            if num_elite > 0:
+                new_population.extend(ga.getElites(population, num_elite))
+          
+            if num_cull > 0:
+                ga.cull(new_population, num_cull)
+            
+            population = new_population
+            if time.time() >= timeAllowed + start_time:
+                done = True
 
-    print "*** Best solution"
-    print best_individual
-    print "Individual: ", ga.str_phenotype(best_individual)
-    #print "Num Broken rules: ", ga.countBrokenRules(best_individual)
-    print "Score: ", best_score
-    #print "Fitness: ", ga.fitnessFn(best_individual)
-    print "Generation found: ", best_gen
-    print "Number of generations: " + str(numGens)
+        print "*** Best solution"
+        print best_individual
+        print "Individual: ", ga.str_phenotype(best_individual)
+        #print "Num Broken rules: ", ga.countBrokenRules(best_individual)
+        print "Score: ", best_score
+        #print "Fitness: ", ga.fitnessFn(best_individual)
+        print "Generation found: ", best_gen
+        print "Number of generations: " + str(numGens)
 
 
 # parse the command line inputs, run the genetic algorithm, print the results
@@ -126,7 +131,7 @@ def main():
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
     ga = parseInput(puzzleNum, filename)
-    runGA(ga, timeLimit)
+    runGA(ga, timeLimit, 'resultsFile.csv')
     
 sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
 

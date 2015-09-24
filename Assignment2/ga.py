@@ -7,7 +7,7 @@ import time
 import sys
 
 # parse the input differently depending on which problem is being run
-def parseInput(puzzleNum, inputfile, timeLimit):
+def parseInput(puzzleNum, inputfile):
 
     f = open(inputfile, 'r')
 
@@ -51,7 +51,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     return ga
 
-def runGA(ga):
+def runGA(ga, timeLimit):
     # set up initial population
     population = ga.generatePopulation()
     
@@ -59,7 +59,7 @@ def runGA(ga):
     #   print population[i]
 
     # set initial variables
-    timeAllowed = 4
+    timeAllowed = timeLimit
     mutation_prob = .05
     done = False
     numGens = 1
@@ -97,11 +97,11 @@ def runGA(ga):
             ga.cull(new_population, num_cull)
         
         population = new_population
-        break
         if time.time() >= timeAllowed + start_time:
         	done = True
 
     print "*** Best solution"
+    print best_individual
     print "Individual: ", ga.str_phenotype(best_individual)
     #print "Num Broken rules: ", ga.countBrokenRules(best_individual)
     print "Score: ", best_score
@@ -116,10 +116,10 @@ def main():
     puzzleNum = int(sys.argv[1])
     filename = sys.argv[2]
     timeLimit = sys.argv[3]
-    ga = parseInput(puzzleNum, filename, timeLimit)
-    runGA(ga)
+    ga = parseInput(puzzleNum, filename)
+    runGA(ga, timeLimit)
     
-sys.argv = ['ga.py', 1, 'problem1_test1.txt', 1]
+sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
 
 if __name__ == "__main__":
     main()

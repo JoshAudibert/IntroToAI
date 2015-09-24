@@ -190,7 +190,18 @@ class TowerGA(GeneticAlgorithm):
                 # for j in range((len(tower)-1 - i) - tower[i].strength):
                 #     fitness_score = 0.75 * fitness_score
         return num_broken_rules
-
+        
+    def cull(self, population, num_cull):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        for i in range(num_cull):
+            population.remove(sorted_pop[i])
+            
+    def getElites(self, population, num_elite):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        elites = []
+        for i in range(num_elite):
+            elites.append(sorted_pop[len(sorted_pop) - 1 - i])
+        return elites
 
     def score(self, child):    
         num_broken_rules = self.countBrokenRules(child)

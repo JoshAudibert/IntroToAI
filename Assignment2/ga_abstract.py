@@ -30,4 +30,12 @@ class GeneticAlgorithm:
 
     @abc.abstractmethod
     def score(self, child):
+        """Implemetn this per puzzle"""
+        
+    @abc.abstractmethod
+    def cull(self, population, num_cull):
+        """Implement this per puzzle"""
+        
+    @abc.abstractmethod
+    def getElites(self, population, num_elite):
         """Implement this per puzzle"""

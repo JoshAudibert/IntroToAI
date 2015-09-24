@@ -119,6 +119,18 @@ class BinGA(GeneticAlgorithm):
 
     def str_phenotype(self, child):
         return "%s\nFitness: %s" % (str(self.filter_traits(child)), self.fitnessFn(child))
+        
+    def cull(self, population, num_cull):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        for i in range(num_cull):
+            population.remove(sorted_pop[i])
+            
+    def getElites(self, population, num_elite):
+        sorted_pop = sorted(population, key = self.fitnessFn)
+        elites = []
+        for i in range(num_elite):
+            elites.append(sorted_pop[len(sorted_pop) - 1 - i])
+        return elites
 
     def score(self, child):
         b_one = 1

@@ -23,6 +23,7 @@ def parseInput(puzzleNum, inputfile, timeLimit):
 
     elif puzzleNum == 2:
         lines = f.read().splitlines()
+        print lines
         float_list = [float(i) for i in lines]
         # Add list to new genetic algorithm
         ga = BinGA(float_list)
@@ -69,12 +70,12 @@ def runGA(ga):
     best_gen = 1
 
     while not done:
-    	# look for new best fitness
-    	for individual in population:
-	        if(ga.score(individual) > best_score):
-	            best_score = ga.score(individual)
-	            best_individual = individual
-	            best_gen = numGens
+        # look for new best fitness
+        for individual in population:
+            if(ga.score(individual) > best_score):
+                best_score = ga.score(individual)
+                best_individual = individual
+                best_gen = numGens
         new_population = []
         numGens += 1
         for x in range(len(population)):
@@ -89,7 +90,7 @@ def runGA(ga):
             new_population.append(child)
         population = new_population
         if time.time() >= timeAllowed + start_time:
-        	done = True
+            done = True
 
     print "*** Best solution"
     print "Individual: ", ga.str_phenotype(best_individual)
@@ -109,7 +110,7 @@ def main():
     ga = parseInput(puzzleNum, filename, timeLimit)
     runGA(ga)
     
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 1000]
+sys.argv = ['ga.py', 2, 'problem2_test2.txt', 1000]
 
 if __name__ == "__main__":
     main()

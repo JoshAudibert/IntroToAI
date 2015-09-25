@@ -192,7 +192,7 @@ def main():
         writeProblem(prob3_data, 'resultsFile3.csv')
 
     
-sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
+sys.argv = ['ga.py', 3, 'problem3_test3.txt', 20]
 
 if __name__ == "__main__":
     main()

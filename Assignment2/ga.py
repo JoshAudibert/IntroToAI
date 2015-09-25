@@ -67,7 +67,7 @@ def runGA(ga, timeLimit, resultsFile):
     done = False
     numGens = 1
     num_cull = 0
-    num_elite = 0
+    num_elite = 3
     print_gens = 50
     start_time = time.time()
     best_individual = population[0]

@@ -7,7 +7,7 @@ import random
 class AddingGA(GeneticAlgorithm):
     def __init__(self, goalVal, traits):
         # initialize population
-        self.POP_SIZE = 20
+        self.POP_SIZE = 10
         self.goalVal = goalVal
         self.traits = list(traits)
 
@@ -97,10 +97,10 @@ class AddingGA(GeneticAlgorithm):
             population.remove(sorted_pop[len(sorted_pop) - 1 - i])
             
     def getElites(self, population, num_elite):
-        sorted_pop = sorted(population, key = self.fitnessFn)
+        sorted_pop = sorted(population, key = self.score)
         elites = []
         for i in range(num_elite):
-            elites.append(sorted_pop[i])
+            elites.append(sorted_pop[-i])
         return elites
 
     def score(self, child):

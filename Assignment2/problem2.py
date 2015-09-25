@@ -49,7 +49,7 @@ class BinGA(GeneticAlgorithm):
         return child
 
     def generatePopulation(self):
-        POP_SIZE = 10
+        POP_SIZE = 5
         population = []
         for i in range(POP_SIZE):
             individual = []
@@ -125,10 +125,10 @@ class BinGA(GeneticAlgorithm):
             population.remove(sorted_pop[i])
             
     def getElites(self, population, num_elite):
-        sorted_pop = sorted(population, key = self.fitnessFn)
+        sorted_pop = sorted(population, key = self.score)
         elites = []
         for i in range(num_elite):
-            elites.append(sorted_pop[len(sorted_pop) - 1 - i])
+            elites.append(sorted_pop[-i])
         return elites
 
     def score(self, child):

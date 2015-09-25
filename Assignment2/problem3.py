@@ -17,7 +17,7 @@ class towerPiece:
 class TowerGA(GeneticAlgorithm):
     def __init__(self, pieces):
         # initialize population
-        self.POP_SIZE = 20
+        self.POP_SIZE = 10
         self.pieces = list(pieces)
 
     # Determine if there are two pieces at the same level
@@ -191,10 +191,10 @@ class TowerGA(GeneticAlgorithm):
             population.remove(sorted_pop[i])
             
     def getElites(self, population, num_elite):
-        sorted_pop = sorted(population, key = self.fitnessFn)
+        sorted_pop = sorted(population, key = self.score)
         elites = []
         for i in range(num_elite):
-            elites.append(sorted_pop[len(sorted_pop) - 1 - i])
+            elites.append(sorted_pop[-i])
         return elites
 
     def score(self, child):    

@@ -54,6 +54,10 @@ def parseInput(puzzleNum, inputfile):
     return ga
 
 def runGA(ga, timeLimit, resultsFile):
+    testing = True
+    if testing:
+        data = {}
+
     # set up initial population
     population = ga.generatePopulation()
 
@@ -85,14 +89,17 @@ def runGA(ga, timeLimit, resultsFile):
                 sorted_pop = sorted(population, key = ga.score, reverse = True)
                 gen_best = ga.score(sorted_pop[0])
                 gen_median = ga.score(sorted_pop[len(population)//2])
-                gen_worst = ga.score(sorted_pop[len(population)-1])
+                gen_worst = ga.score(sorted_pop[-1])
                     
-                print "Generation Data:"
-                print "number: ", numGens
-                print "best individual score: ", gen_best
-                print "median individual score: ", gen_median
-                print "worst individual score: ", gen_worst
-                csvwriter.writerow([numGens, gen_best, gen_median, gen_worst])
+                if testing:
+                    data[numGens] = [gen_best, gen_worst, gen_median]
+                else:
+                    print "Generation Data:"
+                    print "number: ", numGens
+                    print "best individual score: ", gen_best
+                    print "median individual score: ", gen_median
+                    print "worst individual score: ", gen_worst
+                    csvwriter.writerow([numGens, gen_best, gen_median, gen_worst])
                 
             numGens += 1
             for x in range(len(population) + num_cull - num_elite):
@@ -122,16 +129,68 @@ def runGA(ga, timeLimit, resultsFile):
         #print "Fitness: ", ga.fitnessFn(best_individual)
         print "Generation found: ", best_gen
         print "Number of generations: " + str(numGens)
+    if testing:
+        return data
 
 
 # parse the command line inputs, run the genetic algorithm, print the results
 def main():
+    testing = True
     # Command line format: ga.py puzzle# filename timeLimit
-    puzzleNum = int(sys.argv[1])
-    filename = sys.argv[2]
-    timeLimit = sys.argv[3]
-    ga = parseInput(puzzleNum, filename)
-    runGA(ga, timeLimit, 'resultsFile.csv')
+    if not testing:
+        puzzleNum = int(sys.argv[1])
+        filename = sys.argv[2]
+        timeLimit = sys.argv[3]
+        ga = parseInput(puzzleNum, filename)
+        runGA(ga, timeLimit, 'resultsFile.csv')
+    else:
+        # testing
+        # run each of the problems for test 3 five times and average them per generation
+        prob1_data = []
+        prob2_data = []
+        prob3_data = []
+        # Start with problem 1:
+        for i in range(5):
+            ga = parseInput(1, 'problem1_test1.txt')
+            # data is a dict mapping genNum to a list of [best, worst, median]
+            data = runGA(ga, 2, 'resultsFile.csv')
+            prob1_data.append(data)
+
+        # problem 2:
+        for i in range(5):
+            ga = parseInput(2, 'problem2_test1.txt')
+            # data is a dict mapping genNum to a list of [best, worst, median]
+            data = runGA(ga, 2, 'resultsFile.csv')
+            prob2_data.append(data)
+
+        # problem 3:
+        for i in range(5):
+            ga = parseInput(3, 'problem3_test1.txt')
+            # data is a dict mapping genNum to a list of [best, worst, median]
+            data = runGA(ga, 2, 'resultsFile.csv')
+            prob3_data.append(data)
+
+        def writeProblem(prob_data, file):
+            with open(file, 'wb') as csvfile:
+                csvwriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                gen = 1
+                minGen = max(prob1_data[0].keys())
+                for data in prob_data:
+                    if max(data.keys()) < minGen:
+                        minGen = max(data.keys())
+                print minGen
+                minGen = minGen - (minGen % 50) + 1
+                while gen <= minGen:
+                    csvwriter.writerow([gen, sum([data[gen][0] for data in prob_data])/5.0,
+                                        sum([data[gen][1] for data in prob_data])/5.0,
+                                        sum([data[gen][2] for data in prob_data])/5.0])
+                    gen += 50
+
+        # average the results and print them to the resultsFile.csv
+        writeProblem(prob1_data, 'resultsFile1.csv')
+        writeProblem(prob2_data, 'resultsFile2.csv')
+        writeProblem(prob3_data, 'resultsFile3.csv')
+
     
 sys.argv = ['ga.py', 3, 'problem3_test1.txt', 5]
 

@@ -17,6 +17,7 @@ class towerPiece:
 class TowerGA(GeneticAlgorithm):
     def __init__(self, pieces):
         # initialize population
+        self.MUTATION_PROB = .05
         self.POP_SIZE = 10
         self.pieces = list(pieces)
 
@@ -118,25 +119,44 @@ class TowerGA(GeneticAlgorithm):
 
     #
     def mutate(self, child):
-        non_zero_indices = []
-        for i in range(len(child)):
-            if child[i]:
-                non_zero_indices.append(i)
-
-        # if all zeros or only one piece
-        if len(non_zero_indices) <= 1:
-            child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces))
-            return child
-
-        flipOne = random.randint(0, len(non_zero_indices)-1)
-        childCopy = list(child)
-        del childCopy[flipOne]
-        flipTwo = random.randint(0, len(childCopy)-1)
-
-        # switch pieces
-        child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
-        #child = self.checkTower(child)
+        flip = random.randint(0, len(child)-1)
+        if child[flip]:
+            child[flip] = 0
+        else:
+            child[flip] = random.randint(1, len(self.pieces))
+            child = self.checkTower(child)
         return child
+        # return child
+
+
+        # # edge case check
+        # if len(child) == 1:
+        #     return child
+
+        # non_zero_indices = []
+        # for i in range(len(child)):
+        #     if child[i]:
+        #         non_zero_indices.append(i)
+
+        # # if all zeros
+        # if (len(non_zero_indices) == 0):
+        #     child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces))
+        #     return child
+        # # if one piece
+        # elif (len(non_zero_indices) == 1):
+        #     flipOne = non_zero_indices[0]
+        #     flipTwo = random.randint(0, len(child)-1)
+        #     while flipTwo == flipOne:
+        #         flipTwo = random.randint(0, len(child)-1)
+        #     child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+        #     return child
+        # else:
+        #     flipOne = random.randint(0, len(non_zero_indices)-1)
+        #     flipTwo = random.randint(0, len(non_zero_indices)-1)
+        #     while flipTwo == flipOne:
+        #         flipTwo = random.randint(0, len(non_zero_indices)-1)
+        #     child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
+        #     return child
 
 
     def str_phenotype(self, child):

@@ -7,6 +7,8 @@ import random
 class BinGA(GeneticAlgorithm):
 
     def __init__(self, traits):
+        self.POP_SIZE = 5
+        self.MUTATION_PROB = .05
         self.traits = list(traits)
 
     def binCheck(self, child):
@@ -49,9 +51,8 @@ class BinGA(GeneticAlgorithm):
         return child
 
     def generatePopulation(self):
-        POP_SIZE = 5
         population = []
-        for i in range(POP_SIZE):
+        for i in range(self.POP_SIZE):
             individual = []
             for j in range(len(self.traits)):
                 individual.append(random.randint(1,3))

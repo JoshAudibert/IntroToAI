@@ -8,6 +8,7 @@ class AddingGA(GeneticAlgorithm):
     def __init__(self, goalVal, traits):
         # initialize population
         self.POP_SIZE = 10
+        self.MUTATION_PROB = .05
         self.goalVal = goalVal
         self.traits = list(traits)
 

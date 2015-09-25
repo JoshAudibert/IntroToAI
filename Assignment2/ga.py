@@ -64,7 +64,6 @@ def runGA(ga, timeLimit, resultsFile):
 
     # set initial variables
     timeAllowed = timeLimit
-    mutation_prob = .05
     done = False
     numGens = 1
     num_cull = 0
@@ -108,7 +107,7 @@ def runGA(ga, timeLimit, resultsFile):
                 # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
                 parent_y = ga.randomSelection(population, ga.fitnessFn)
                 child = ga.reproduce(parent_x, parent_y)
-                if random.random() <= mutation_prob:
+                if random.random() <= ga.MUTATION_PROB:
                     child = ga.mutate(child)
                 new_population.append(child)
            

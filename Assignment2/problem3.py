@@ -72,11 +72,13 @@ class TowerGA(GeneticAlgorithm):
 
     # return the piece that the child represents
     def filter_traits(self, child):
-        filtered = []
+        tower = [0] * len(self.pieces)
         for i in range(len(child)):
             if child[i]:
-                filtered.append(str(self.pieces[i]))
-        return filtered
+                tower[child[i]-1] = str(self.pieces[i])
+        # remove zeros
+        tower = filter(lambda z: z != 0, tower)
+        return tower
 
 
     def randomSelection(self, population, fitnessFn):

@@ -151,7 +151,7 @@ def main():
         prob3_data = []
         # Start with problem 1:
         for i in range(5):
-            ga = parseInput(1, 'problem1_test1.txt')
+            ga = parseInput(1, 'problem1_test2.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
             data = runGA(ga, 2, 'resultsFile.csv')
             prob1_data.append(data)

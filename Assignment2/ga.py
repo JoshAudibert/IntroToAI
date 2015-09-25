@@ -130,6 +130,7 @@ def runGA(ga, timeLimit, resultsFile):
         #print "Fitness: ", ga.fitnessFn(best_individual)
         print "Generation found: ", best_gen
         print "Number of generations: " + str(numGens)
+        print ga.score(best_individual)
     if testing:
         return data
 
@@ -154,21 +155,21 @@ def main():
         for i in range(5):
             ga = parseInput(1, 'problem1_test4.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile1.csv')
+            data = runGA(ga, 0, 'resultsFile.csv')
             prob1_data.append(data)
 
         # problem 2:
         for i in range(5):
-            ga = parseInput(2, 'problem2_test1.txt')
+            ga = parseInput(2, 'problem2_test4.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile2.csv')
+            data = runGA(ga, 0, 'resultsFile.csv')
             prob2_data.append(data)
 
         # problem 3:
         for i in range(5):
-            ga = parseInput(3, 'problem3_test1.txt')
+            ga = parseInput(3, 'problem3_test2.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile3.csv')
+            data = runGA(ga, 10, 'resultsFile.csv')
             prob3_data.append(data)
 
         def writeProblem(prob_data, file):

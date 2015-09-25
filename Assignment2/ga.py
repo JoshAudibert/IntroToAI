@@ -53,6 +53,7 @@ def parseInput(puzzleNum, inputfile):
 
     return ga
 
+
 def runGA(ga, timeLimit, resultsFile):
     testing = True
     if testing:
@@ -67,7 +68,7 @@ def runGA(ga, timeLimit, resultsFile):
     done = False
     numGens = 1
     num_cull = 0
-    num_elite = 3
+    num_elite = 0
     print_gens = 50
     start_time = time.time()
     best_individual = population[0]
@@ -88,7 +89,7 @@ def runGA(ga, timeLimit, resultsFile):
             if numGens % print_gens == 1:
                 sorted_pop = sorted(population, key = ga.score, reverse = True)
                 gen_best = ga.score(sorted_pop[0])
-                gen_median = ga.score(sorted_pop[len(population)//2])
+                gen_median = ga.score(sorted_pop[len(sorted_pop)//2]) if len(sorted_pop) % 2 == 1 else (ga.score(sorted_pop[(len(sorted_pop)+1)//2]) + ga.score(sorted_pop[(len(sorted_pop)-1)//2]))/2.0
                 gen_worst = ga.score(sorted_pop[-1])
                     
                 if testing:
@@ -151,23 +152,23 @@ def main():
         prob3_data = []
         # Start with problem 1:
         for i in range(5):
-            ga = parseInput(1, 'problem1_test2.txt')
+            ga = parseInput(1, 'problem1_test4.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile.csv')
+            data = runGA(ga, 2, 'resultsFile1.csv')
             prob1_data.append(data)
 
         # problem 2:
         for i in range(5):
             ga = parseInput(2, 'problem2_test1.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile.csv')
+            data = runGA(ga, 2, 'resultsFile2.csv')
             prob2_data.append(data)
 
         # problem 3:
         for i in range(5):
             ga = parseInput(3, 'problem3_test1.txt')
             # data is a dict mapping genNum to a list of [best, worst, median]
-            data = runGA(ga, 2, 'resultsFile.csv')
+            data = runGA(ga, 2, 'resultsFile3.csv')
             prob3_data.append(data)
 
         def writeProblem(prob_data, file):
@@ -178,7 +179,6 @@ def main():
                 for data in prob_data:
                     if max(data.keys()) < minGen:
                         minGen = max(data.keys())
-                print minGen
                 minGen = minGen - (minGen % 50) + 1
                 while gen <= minGen:
                     csvwriter.writerow([gen, sum([data[gen][0] for data in prob_data])/5.0,

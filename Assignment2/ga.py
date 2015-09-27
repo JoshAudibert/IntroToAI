@@ -103,9 +103,8 @@ def runGA(ga, timeLimit, resultsFile):
                 
             numGens += 1
             for x in range(len(population) + num_cull - num_elite):
-                parent_x = ga.randomSelection(population, ga.fitnessFn)
-                # TODO: potentially temporarily remove parent_x from population so parent_y isn't also parent_x
-                parent_y = ga.randomSelection(population, ga.fitnessFn)
+                parent_x = ga.randomSelection(population)
+                parent_y = ga.randomSelection(population)
                 child = ga.reproduce(parent_x, parent_y)
                 if random.random() <= ga.MUTATION_PROB:
                     child = ga.mutate(child)

@@ -43,9 +43,9 @@ class AddingGA(GeneticAlgorithm):
 
     # choosed a single parent from the population to reproduce with a weighted probability
     # based on the fitnesses of each child
-    def randomSelection(self, population, fitnessFn):
+    def randomSelection(self, population):
         # List of child, fitness pairs
-        pop_fitnesses = [[child, fitnessFn(child)] for child in population]
+        pop_fitnesses = [[child, self.fitnessFn(child)] for child in population]
         
         # TODO: maybe put this into the fitnessFn
         max_fit = max([fitness for child, fitness in pop_fitnesses])

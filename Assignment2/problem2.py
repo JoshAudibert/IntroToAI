@@ -71,9 +71,9 @@ class BinGA(GeneticAlgorithm):
 
         return filtered
 
-    def randomSelection(self, population, fitnessFn):
+    def randomSelection(self, population):
         # List of child, fitness pairs
-        pop_fitnesses = [[child, fitnessFn(child)] for child in population]
+        pop_fitnesses = [[child, self.fitnessFn(child)] for child in population]
 
         # TODO: maybe put this into the fitnessFn
 

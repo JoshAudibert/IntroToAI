@@ -82,9 +82,9 @@ class TowerGA(GeneticAlgorithm):
         return tower
 
 
-    def randomSelection(self, population, fitnessFn):
+    def randomSelection(self, population):
         # List of child, fitness pairs
-        pop_fitnesses = [[child, fitnessFn(child)] for child in population]
+        pop_fitnesses = [[child, self.fitnessFn(child)] for child in population]
         # since fitness can be negative, need to make things positive for weighted
         # probability
         min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))
@@ -126,43 +126,12 @@ class TowerGA(GeneticAlgorithm):
             child[flip] = random.randint(1, len(self.pieces))
             child = self.checkTower(child)
         return child
-        # return child
 
-
-        # # edge case check
-        # if len(child) == 1:
-        #     return child
-
-        # non_zero_indices = []
-        # for i in range(len(child)):
-        #     if child[i]:
-        #         non_zero_indices.append(i)
-
-        # # if all zeros
-        # if (len(non_zero_indices) == 0):
-        #     child[random.randint(0, len(child)-1)] = random.randint(1, len(self.pieces))
-        #     return child
-        # # if one piece
-        # elif (len(non_zero_indices) == 1):
-        #     flipOne = non_zero_indices[0]
-        #     flipTwo = random.randint(0, len(child)-1)
-        #     while flipTwo == flipOne:
-        #         flipTwo = random.randint(0, len(child)-1)
-        #     child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
-        #     return child
-        # else:
-        #     flipOne = random.randint(0, len(non_zero_indices)-1)
-        #     flipTwo = random.randint(0, len(non_zero_indices)-1)
-        #     while flipTwo == flipOne:
-        #         flipTwo = random.randint(0, len(non_zero_indices)-1)
-        #     child[flipOne], child[flipTwo] = child[flipTwo], child[flipOne]
-        #     return child
-
-
+    #
     def str_phenotype(self, child):
             return self.filter_traits(child)
 
-
+    #
     def countBrokenRules(self, child):
         num_broken_rules = 0
 
@@ -203,15 +172,16 @@ class TowerGA(GeneticAlgorithm):
         for i in range(len(tower)):
             if (len(tower)-1 - i) > tower[i].strength:
                 num_broken_rules += 1
-                # for j in range((len(tower)-1 - i) - tower[i].strength):
-                #     fitness_score = 0.75 * fitness_score
+
         return num_broken_rules
         
+    #
     def cull(self, population, num_cull):
         sorted_pop = sorted(population, key = self.fitnessFn)
         for i in range(num_cull):
             population.remove(sorted_pop[i])
-            
+           
+    # 
     def getElites(self, population, num_elite):
         sorted_pop = sorted(population, key = self.score)
         elites = []
@@ -219,6 +189,7 @@ class TowerGA(GeneticAlgorithm):
             elites.append(sorted_pop[-i])
         return elites
 
+    #
     def score(self, child):    
         num_broken_rules = self.countBrokenRules(child)
         if num_broken_rules > 0:

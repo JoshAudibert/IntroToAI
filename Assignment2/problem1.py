@@ -76,7 +76,6 @@ class AddingGA(GeneticAlgorithm):
         child_a = x_left + y_right
         child_b = y_left + x_right
 
-        # TODO: we may want to add a flag to potentially return both children
         return child_a
 
     # flips a random input integer from on or off

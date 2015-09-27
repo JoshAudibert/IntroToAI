@@ -74,9 +74,6 @@ class BinGA(GeneticAlgorithm):
     def randomSelection(self, population):
         # List of child, fitness pairs
         pop_fitnesses = [[child, self.fitnessFn(child)] for child in population]
-
-        # TODO: maybe put this into the fitnessFn
-
         # since fitness can be negative, need to make things positive for weighted
         # probability
         min_fit = abs(min([fitness for child, fitness in pop_fitnesses]))

@@ -10,9 +10,9 @@ The program can be run in command line by:
 
 ga.py problem_num "Test X.txt" time_limit
 
-Example running Test 1 with heuristic 4:
+Example running problem3_test1.txt with problem 3 and a time limit of 10 seconds:
 
-astar.py "Test 1.txt" 4
+ga.py 3 "problem3_test1.txt" 10
 
 Argv[0]: ga.py
 Argv[1]: which problem to run from 1 to 3

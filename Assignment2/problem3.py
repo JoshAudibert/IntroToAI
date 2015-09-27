@@ -68,7 +68,7 @@ class TowerGA(GeneticAlgorithm):
                 
         fitness = 10 + (num_pieces*num_pieces) - tower_cost
         # scale it down by 3/4 for each rule broken
-        fitness *= 0.5**num_broken_rules
+        fitness *= 0.75**num_broken_rules
         return fitness
 
     # return the piece that the child represents

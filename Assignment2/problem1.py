@@ -12,10 +12,12 @@ class AddingGA(GeneticAlgorithm):
         self.goalVal = goalVal
         self.traits = list(traits)
 
+    # Generate the initial population of size POP_SIZE
     def generatePopulation(self):
         population = []
         for i in range(self.POP_SIZE):
             individual = []
+            # Turn on random numbers from input
             for j in range(len(self.traits)):
                 if random.randint(0, 1):
                     individual.append(1)
@@ -24,6 +26,8 @@ class AddingGA(GeneticAlgorithm):
             population.append(individual)
         return population
 
+    # Fitness function calculated as the difference in the sum
+    # of all numbers the numbers and the goal number
     def fitnessFn(self, child):
         NEG_MULT = 2
         childSum = sum(self.filter_traits(child))
@@ -47,7 +51,6 @@ class AddingGA(GeneticAlgorithm):
         # List of child, fitness pairs
         pop_fitnesses = [[child, self.fitnessFn(child)] for child in population]
         
-        # TODO: maybe put this into the fitnessFn
         max_fit = max([fitness for child, fitness in pop_fitnesses])
         norm_fitnesses = [[child, (-1) * fitness + max_fit + 1] for child, fitness in pop_fitnesses]
 
@@ -90,19 +93,25 @@ class AddingGA(GeneticAlgorithm):
     # returns the list of numbers that represents the child
     def str_phenotype(self, child):
         return self.filter_traits(child)
-        
+
+    # removes num_cull items from the population with the worst fitness function score 
     def cull(self, population, num_cull):
         sorted_pop = sorted(population, key = self.fitnessFn)
         for i in range(num_cull):
             population.remove(sorted_pop[len(sorted_pop) - 1 - i])
-            
+
+    # returns num_elites of population with the best score
     def getElites(self, population, num_elite):
+        # sort population based on score
         sorted_pop = sorted(population, key = self.score)
         elites = []
+        # take items with top score
         for i in range(num_elite):
             elites.append(sorted_pop[-i])
         return elites
 
+    # Scores based on the sum of all of the traits
+    # returns 0 if the total is greater than the goal value
     def score(self, child):
         total = sum(self.filter_traits(child))
         if total > self.goalVal:

@@ -1,4 +1,4 @@
-import random
+from random import randint
 import time
 import sys
 
@@ -6,21 +6,67 @@ def makeMap(rows, cols, numBats, numBombs):
 
     global startingCol
     global startingRow
+    world_map = []
+
+    # Neighboring Corrdinates
+    numNeighbors = 8
+    # (-1,-1) (0,-1) (1,-1)
+    # (-1,0)   bomb  (1,0)
+    # (-1,1)  (0,1)  (1,1)
+    adj_x = [-1,0,1,-1,1,-1,0,1]
+    adj_y = [-1,-1,-1,0,0,1,1,1]
 
     # Randomly pick a starting location for the robot
     startingCol = randint(0, cols - 1)
     startingRow = randint(0, rows - 1)
-    
-    world_map = [] #List to hold all of the world map pieces
 
-    # Bombs cannot be placed in squares bordering the starting location
+    #List to hold all of the world map pieces
+    for j in range(rows):
+        col = []
+        for k in range(cols):
+            col.append(WorldPiece(0,0,0,0))
+        world_map.append(col)
+        col = []
 
-    #DFS to add all non walled neighbors to list then do the same for their neighbors
-    # If not on list- regenerate map
+    # Place numBombs number of bombs randomly
+    for i in range(numBombs):
+        bomb_x = randint(0, cols - 1)
+        bomb_y = randint(0, rows - 1)
 
+        # Bombs cannot be placed in squares bordering the starting location
+        while ((bomb_x <= startingCol + 1) and (bomb_x >= startingCol + 1)) and ((bomb_y <= startingRow + 1) and (bomb_y >= startingRow + 1)):
+            bomb_x = randint(0, cols - 1)
+            bomb_y = randint(0, rows - 1)
+
+        world_map[bomb_x][bomb_y].placeBomb() # Add bomb
+
+        # Increment neighbors adjacent bomb counts
+        for neighbor in range(numNeighbors):
+            next_x = bomb_x + adj_x[neighbor]
+            next_y = bomb_y + adj_y[neighbor]
+            # Check that neighbor is in room
+            if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
+                world_map[next_x][next_y].addAdjBomb()
+
+    # Print out the current map
+    '''for l in range(rows):
+        for k in range(cols):
+            print
+
+    print world_map[0][0].
+    print world_map[1]
+    print world_map[2]
+    print world_map[3]'''
     
     return world_map
 
+# Checks map to ensure there are no closed off areas
+def checkMapLegality(world_map):
+    
+    # DFS to add all non walled neighbors to list then do the same for their neighbors
+    # If not on list- regenerate map
+    
+    pass
 
 class WorldPiece:
     def __init__(self, adjBombs, adjBats, bomb, battery):
@@ -80,9 +126,9 @@ def main():
     # Command line format: minesweeper.py puzzleHeight puzzleWidth bumbBatteries numBombs
     puzzleHeight = int(sys.argv[1])
     puzzleWidth = int(sys.argv[2])
-    numBatteries = int(sys.argv[3)
+    numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
-    worldMap = makeInput(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+    worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
 
     
 sys.argv = ['minesweeper.py', 4, 4, 10, 10]

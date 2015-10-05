@@ -19,11 +19,13 @@ def makeMap(rows, cols, numBats, numBombs):
     # Randomly pick a starting location for the robot
     startingCol = randint(0, cols - 1)
     startingRow = randint(0, rows - 1)
+    print "startingCol: ", startingCol
+    print "startingRow: ", startingRow
 
     #List to hold all of the world map pieces
-    for j in range(rows):
+    for j in range(cols):
         col = []
-        for k in range(cols):
+        for k in range(rows):
             col.append(WorldPiece(0,0,0,0))
         world_map.append(col)
         col = []
@@ -31,14 +33,16 @@ def makeMap(rows, cols, numBats, numBombs):
     # Place numBombs number of bombs randomly
     for i in range(numBombs):
         bomb_x = randint(0, cols - 1)
-        bomb_y = randint(0, rows - 1)
+        bomb_y = randint(0, rows - 1)       
 
         # Bombs cannot be placed in squares bordering the starting location
-        while ((bomb_x <= startingCol + 1) and (bomb_x >= startingCol + 1)) and ((bomb_y <= startingRow + 1) and (bomb_y >= startingRow + 1)):
+        while (((bomb_x <= startingCol + 1) and (bomb_x >= startingCol - 1)) and ((bomb_y <= startingRow + 1) and (bomb_y >= startingRow - 1)) or (world_map[bomb_x][bomb_y].bomb)):
             bomb_x = randint(0, cols - 1)
             bomb_y = randint(0, rows - 1)
 
         world_map[bomb_x][bomb_y].placeBomb() # Add bomb
+        print "bomb x: ", bomb_x
+        print "bomb_y: ", bomb_y
 
         # Increment neighbors adjacent bomb counts
         for neighbor in range(numNeighbors):
@@ -48,15 +52,14 @@ def makeMap(rows, cols, numBats, numBombs):
             if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
                 world_map[next_x][next_y].addAdjBomb()
 
-    # Print out the current map
-    '''for l in range(rows):
-        for k in range(cols):
-            print
 
-    print world_map[0][0].
-    print world_map[1]
-    print world_map[2]
-    print world_map[3]'''
+    # Print out the current map
+    for y in range(rows):
+        printRow = []
+        for x in range(cols):
+            printRow.append(world_map[x][y].printBombs())
+        print printRow
+        
     
     return world_map
 
@@ -92,6 +95,14 @@ class WorldPiece:
 
     def placeBat(self):
         self.battery = True
+
+    def printBombs(self):
+        if(self.bomb):
+            return 'B'
+        elif(self.adjBombs):
+            return str(self.adjBombs)
+        else:
+            return ' '
 
     def __str__(self):
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
@@ -131,7 +142,7 @@ def main():
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
 
     
-sys.argv = ['minesweeper.py', 4, 4, 10, 10]
+sys.argv = ['minesweeper.py', 8, 12, 3, 3]
 
 if __name__ == "__main__":
     main()

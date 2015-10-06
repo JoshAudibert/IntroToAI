@@ -28,7 +28,6 @@ def makeMap(rows, cols, numBats, numBombs):
         for k in range(rows):
             col.append(WorldPiece(0,0,0,0))
         world_map.append(col)
-        col = []
 
     # Place numBombs number of bombs randomly
     for i in range(numBombs):
@@ -36,13 +35,12 @@ def makeMap(rows, cols, numBats, numBombs):
         bomb_y = randint(0, rows - 1)       
 
         # Bombs cannot be placed in squares bordering the starting location
-        while (((bomb_x <= startingCol + 1) and (bomb_x >= startingCol - 1)) and ((bomb_y <= startingRow + 1) and (bomb_y >= startingRow - 1)) or (world_map[bomb_x][bomb_y].bomb)):
+        while (abs(startingCol - bomb_x) <= 1 and abs(startingRow - bomb_y) <= 1) or world_map[bomb_x][bomb_y].bomb:
             bomb_x = randint(0, cols - 1)
             bomb_y = randint(0, rows - 1)
 
         world_map[bomb_x][bomb_y].placeBomb() # Add bomb
-        print "bomb x: ", bomb_x
-        print "bomb_y: ", bomb_y
+        print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
 
         # Increment neighbors adjacent bomb counts
         for neighbor in range(numNeighbors):
@@ -94,15 +92,13 @@ class WorldPiece:
         self.bomb = True
 
     def placeBat(self):
-        self.battery = True
+        self.battery = 0
 
     def printBombs(self):
-        if(self.bomb):
+        if self.bomb:
             return 'B'
-        elif(self.adjBombs):
-            return str(self.adjBombs)
         else:
-            return ' '
+            return str(self.adjBombs)
 
     def __str__(self):
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
@@ -142,7 +138,7 @@ def main():
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
 
     
-sys.argv = ['minesweeper.py', 8, 12, 3, 3]
+sys.argv = ['minesweeper.py', 8, 8, 3, 20]
 
 if __name__ == "__main__":
     main()

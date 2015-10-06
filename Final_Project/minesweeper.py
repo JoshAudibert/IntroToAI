@@ -11,8 +11,8 @@ def makeMap(rows, cols, numBats, numBombs):
     # Neighboring Corrdinates
     numNeighbors = 8
     # (-1,-1) (0,-1) (1,-1)
-    # (-1,0)   bomb  (1,0)
-    # (-1,1)  (0,1)  (1,1)
+    # (-1, 0) robot  (1, 0)
+    # (-1, 1) (0, 1) (1, 1)
     adj_x = [-1,0,1,-1,1,-1,0,1]
     adj_y = [-1,-1,-1,0,0,1,1,1]
 
@@ -26,7 +26,7 @@ def makeMap(rows, cols, numBats, numBombs):
     for j in range(cols):
         col = []
         for k in range(rows):
-            col.append(WorldPiece(0,0,0,0))
+            col.append(WorldSquare(0,0,0,0))
         world_map.append(col)
 
     # Place numBombs number of bombs randomly
@@ -47,7 +47,8 @@ def makeMap(rows, cols, numBats, numBombs):
             next_x = bomb_x + adj_x[neighbor]
             next_y = bomb_y + adj_y[neighbor]
             # Check that neighbor is in room
-            if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
+            if 0 <= next_x < cols and 0 <= next_y < rows:
+            #if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
                 world_map[next_x][next_y].addAdjBomb()
 
 
@@ -69,7 +70,7 @@ def checkMapLegality(world_map):
     
     pass
 
-class WorldPiece:
+class WorldSquare:
     def __init__(self, adjBombs, adjBats, bomb, battery):
         self.adjBombs = adjBombs
         self.adjBats = adjBats
@@ -103,7 +104,8 @@ class WorldPiece:
     def __str__(self):
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
 
-class RobotPiece:
+
+class RobotSquare:
     def __init__(self, flagged, battery, probBomb, probBat, checked):
         self.flagged = flagged 
         self.probBomb = probBomb

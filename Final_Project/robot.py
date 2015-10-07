@@ -62,7 +62,7 @@ class Robot:
 		return neighbors
 
 	# Updates self.bombStates to reflect gained information from addedLoc
-	def updateProbabilities(self, addedLoc):
+	def updateBombStates(self, addedLoc):
 		# construct list of new adjacent unsearched squares
 		newAdjUnsearched = []
 		neighbors = self.getNeighbors(addedLoc)
@@ -79,6 +79,22 @@ class Robot:
 
 		# Remove invalid current bombStates
 		self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
+
+	# Update the probBombs of each RobotSquare in the fringe based on new info gained
+	# at addedLoc
+	def updateProbabilities(self, addedLoc):
+		self.updateBombStates(addedLoc)
+		# go through bomb states and count how many times a bomb is in each fringe square
+		fringeBombCounts = [0] * len(self.fringe)
+		for bombState in self.bombStates:
+			for sqr_i in range(len(self.fringe)):
+				loc = self.fringe[sqr_i].loc
+				if bombState[loc[0]][loc[1]]:
+					# bomb here in this fringe square in this bombState
+					fringeBombCounts[sqr_i] += 1
+		# update probabilities accordingly
+		for sqr_i in range(len(self.fringe)):
+			self.fringe[sqr_i].probBomb = float(fringeBombCounts[sqr_i])/len(self.bombStates)
 
 
 	def move(self):

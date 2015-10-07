@@ -47,6 +47,29 @@ class Robot:
 	def changeBattery(self, difference):
 		self.battery += difference
 
+	def getNeighbors(self, loc):
+		# find all neighbors within the map
+		width = len(self.currentMap[0])
+		height = len(self.currentMap)
+		delta_x = [-1, 0, 1,-1, 1,-1, 0, 1]
+		delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
+		neighbors = []
+		for i in range(len(delta_x)):
+			new_x = loc[0] + delta_x
+			new_y = loc[1] + delta_y
+			if 0 <= new_x < width and 0 <= new_y < height:
+				neighbors.append(self.currentMap[new_x][new_y])
+		return neighbors
+
+	def updateProbabilities(self, addedLoc):
+		# construct list of new adjacent unsearched squares
+		newAdjUnsearched = self.getNeighbors(addedLoc)
+
+		# For each hypothesis state (either WorldMap or 2D array of booleans)
+		for bombState in bombStates:
+
+
+
 	def move(self):
 		# we have current list of hypotheses (valid bomb states)
 		# and thus have bomb probabilities of fringe squares

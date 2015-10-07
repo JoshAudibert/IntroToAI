@@ -32,6 +32,8 @@ class Robot:
 		self.battery = initialBattery
 		self.loc = location # [0] is x, [1] is y (namedtuple?)
 		self.isDead = False
+		#self.isOnPath = False # true when Robot has set path it's on
+		#self.path = [] # When isOnPath, ordered list of 'N', 'S', 'E', and 'W'
 		self.currentMap = []
 		# initialize map
 		for row in range(roomWidth):
@@ -46,10 +48,18 @@ class Robot:
 		self.battery += difference
 
 	def move(self):
-		pass
+		# we have current list of hypotheses (valid bomb states)
+		# and thus have bomb probabilities of fringe squares
+		#if isOnPath:
+
+		# based on probability map, choose best location to search
+		# TELEPORT!!
+		# search location
+		# update probabilities
+		# update battery if you feel like it
+
 
 	def explode(self):
 		self.isDead = True
 
-	def
 

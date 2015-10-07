@@ -9,6 +9,8 @@ class RobotSquare:
         self.probBomb = probBomb
         self.probBat = probBat
         self.checked = checked
+        self.adjBombs = 0
+        self.adjBatteries = 0
         
     def flag(self):
         self.flagged = True
@@ -25,6 +27,7 @@ class RobotSquare:
     def __str__(self):
         return "%d, %d, %d, %d" % (self.bomb, self.battery)
 
+
 class Robot:
 	def __init__(self, initialBattery, roomWidth, roomHeight, location):
 		self.battery = initialBattery
@@ -33,6 +36,7 @@ class Robot:
 		self.bombStates = [] # list of 2D arrays of booleans
 		#self.isOnPath = False # true when Robot has set path it's on
 		#self.path = [] # When isOnPath, ordered list of 'N', 'S', 'E', and 'W'
+		self.checkedSquares = [] # list of searched RobotSquares
 		self.fringe = [] # unsearched squares adjacent to searched squares
 		self.currentMap = []
 		# initialize map
@@ -47,6 +51,7 @@ class Robot:
 	def changeBattery(self, difference):
 		self.battery += difference
 
+
 	def getNeighbors(self, loc):
 		# find all neighbors within the map
 		width = len(self.currentMap[0])
@@ -60,6 +65,18 @@ class Robot:
 			if 0 <= new_x < width and 0 <= new_y < height:
 				neighbors.append(self.currentMap[new_x][new_y])
 		return neighbors
+
+
+	# check whether a bombState has the correct number of bombs adjacent to each checked Square
+	def isValidBombState(self, bombState):
+		for square in self.checkedSquares:
+			neighbors = self.getNeighbors(square.loc)
+			# count how many neighbors have bombs in the bombState
+			countAdjBombs = len([sqr for sqr in neighbors if bombState[sqr.loc[0]][sqr.loc[1]]])
+			if countAdjBombs != square.adjBombs:
+				return False
+		return True
+
 
 	# Updates self.bombStates to reflect gained information from addedLoc
 	def updateBombStates(self, addedLoc):
@@ -79,6 +96,7 @@ class Robot:
 
 		# Remove invalid current bombStates
 		self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
+
 
 	# Update the probBombs of each RobotSquare in the fringe based on new info gained
 	# at addedLoc
@@ -107,7 +125,6 @@ class Robot:
 		# search location
 		# update probabilities
 		# update battery if you feel like it
-
 
 	def explode(self):
 		self.isDead = True

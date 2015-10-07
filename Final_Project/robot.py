@@ -3,7 +3,8 @@ import time
 import sys
 
 class RobotSquare:
-    def __init__(self, flagged, battery, probBomb, probBat, checked):
+    def __init__(self, location, flagged, battery, probBomb, probBat, checked):
+        self.loc = location
         self.flagged = flagged 
         self.probBomb = probBomb
         self.probBat = probBat
@@ -21,9 +22,6 @@ class RobotSquare:
     def changeBatProb(self, probability):
         self.probBat = probability
 
-    def setChecked(self):
-        self.checked = True
-
     def __str__(self):
         return "%d, %d, %d, %d" % (self.bomb, self.battery)
 
@@ -32,14 +30,16 @@ class Robot:
 		self.battery = initialBattery
 		self.loc = location # [0] is x, [1] is y (namedtuple?)
 		self.isDead = False
+		self.bombStates = [] # list of 2D arrays of booleans
 		#self.isOnPath = False # true when Robot has set path it's on
 		#self.path = [] # When isOnPath, ordered list of 'N', 'S', 'E', and 'W'
+		self.fringe = [] # unsearched squares adjacent to searched squares
 		self.currentMap = []
 		# initialize map
 		for row in range(roomWidth):
 			mapRow = []
 			for col in range(roomHeight):
-				mapRow.append(RobotSquare(False, 0, 0, 0, False))
+				mapRow.append(RobotSquare([col, row], False, 0, 0, 0, False))
 			self.currentMap.append(mapRow)
 		# set initial loca
 
@@ -61,13 +61,24 @@ class Robot:
 				neighbors.append(self.currentMap[new_x][new_y])
 		return neighbors
 
+	# Updates self.bombStates to reflect gained information from addedLoc
 	def updateProbabilities(self, addedLoc):
 		# construct list of new adjacent unsearched squares
-		newAdjUnsearched = self.getNeighbors(addedLoc)
+		newAdjUnsearched = []
+		neighbors = self.getNeighbors(addedLoc)
+		for neighbor in neighbors:
+			if not neighbor.checked and neighbor not in self.fringe:
+				newAdjUnsearched.append(neighbor)
 
-		# For each hypothesis state (either WorldMap or 2D array of booleans)
-		for bombState in bombStates:
+		for newSquare in newAdjUnsearched:
+			# Add new bombStates
+			for bombState in self.bombStates:
+				newBombState = list(bombState)
+				newBombState[newSquare.loc[0]][newSquare.loc[1]] = True
+				self.bombStates.append(newBombState)
 
+		# Remove invalid current bombStates
+		self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
 
 
 	def move(self):

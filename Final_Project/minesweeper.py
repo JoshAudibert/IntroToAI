@@ -26,9 +26,47 @@ def makeMap(rows, cols, numBats, numBombs):
     for j in range(cols):
         col = []
         for k in range(rows):
-            col.append(WorldSquare(0,0,0,0))
+            col.append(WorldSquare(0,0,1,0))
         world_map.append(col)
 
+    # Calculate the number of safe squares needed
+    safeSum = rows*cols - numBombs;
+    safeCount = 0;
+
+    # Ensure that the starting location is not a bomb
+    world_map[startingCol][startingRow].removeBomb()
+    safeCount = safeCount + 1
+
+    # Make all 9 squares bordering start safe
+    for neighbor in range(numNeighbors):
+        next_x = startingCol + adj_x[neighbor]
+        next_y = startingRow + adj_y[neighbor]
+        # Check that neighbor is in room
+        if 0 <= next_x < cols and 0 <= next_y < rows:
+            # Check that neighbor is not safe already
+            if world_map[next_x][next_y].bomb:
+                world_map[next_x][next_y].removeBomb()
+                safeCount = safeCount + 1
+
+    # Move from start randomly until all safe squares are placed
+    curr_x = startingCol
+    curr_y = startingRow
+
+    # Keep going until all safe squares are placed
+    while not safeCount == safeSum:
+        direction = randint(0,7)
+        next_x = curr_x + adj_x[direction]
+        next_y = curr_y + adj_y[direction]
+        # Check that neighbor is in room
+        if 0 <= next_x < cols and 0 <= next_y < rows:
+            # Check that neighbor is not safe already
+            if world_map[next_x][next_y].bomb:
+                world_map[next_x][next_y].removeBomb()
+                safeCount = safeCount + 1
+            curr_x = next_x
+            curr_y = next_y
+
+    '''
     # Place numBombs number of bombs randomly
     for i in range(numBombs):
         bomb_x = randint(0, cols - 1)
@@ -51,7 +89,7 @@ def makeMap(rows, cols, numBats, numBombs):
             #if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
                 world_map[next_x][next_y].addAdjBomb()
 
-
+    '''
     # Print out the current map
     for y in range(rows):
         printRow = []
@@ -67,6 +105,24 @@ def checkMapLegality(world_map):
     
     # DFS to add all non walled neighbors to list then do the same for their neighbors
     # If not on list- regenerate map
+    '''
+    cols = len(world_map);
+    rows = len(world_map[0]);
+
+    # Make empty list of same size as the world map
+    check_map = []
+    for j in range(cols):
+        col = []
+        for k in range(rows):
+            col.append(0)
+        check_map.append(col)
+
+    # Move from one corner to the other
+    curr_x = 0;
+    curr_y = 0;
+    goal_x = cols; 
+    goal_y = rows;
+    '''
     
     pass
 
@@ -91,6 +147,9 @@ class WorldSquare:
 
     def placeBomb(self):
         self.bomb = True
+
+    def removeBomb(self):
+        self.bomb = False
 
     def placeBat(self):
         self.battery = 0

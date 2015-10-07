@@ -105,31 +105,6 @@ class WorldSquare:
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
 
 
-class RobotSquare:
-    def __init__(self, flagged, battery, probBomb, probBat, checked):
-        self.flagged = flagged 
-        self.probBomb = probBomb
-        self.probBat = probBat
-        self.checked = checked
-        
-    def flag(self):
-        self.flagged = True
-
-    def setChecked(self):
-        self.checked = True
-
-    def changeBombProb(self, probability):
-        self.probBomb = probability
-
-    def changeBatProb(self, probability):
-        self.probBat = probability
-
-    def setChecked(self):
-        self.checked = True
-
-    def __str__(self):
-        return "%d, %d, %d, %d" % (self.bomb, self.battery)
-
 
 def main():
     # Command line format: minesweeper.py puzzleHeight puzzleWidth bumbBatteries numBombs
@@ -138,6 +113,7 @@ def main():
     numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+
 
     
 sys.argv = ['minesweeper.py', 8, 8, 3, 20]

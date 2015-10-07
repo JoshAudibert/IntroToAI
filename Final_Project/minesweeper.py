@@ -37,6 +37,10 @@ def makeMap(rows, cols, numBats, numBombs):
     world_map[startingCol][startingRow].removeBomb()
     safeCount = safeCount + 1
 
+    # Keep track of all coordinates of items in the fringe
+    fringe_x = []
+    fringe_y = []
+
     # Make all 9 squares bordering start safe
     for neighbor in range(numNeighbors):
         next_x = startingCol + adj_x[neighbor]
@@ -47,6 +51,8 @@ def makeMap(rows, cols, numBats, numBombs):
             if world_map[next_x][next_y].bomb:
                 world_map[next_x][next_y].removeBomb()
                 safeCount = safeCount + 1
+                fringe_x.append(next_x)
+                fringe_y.append(next_y)
 
     # Move from start randomly until all safe squares are placed
     curr_x = startingCol
@@ -54,6 +60,11 @@ def makeMap(rows, cols, numBats, numBombs):
 
     # Keep going until all safe squares are placed
     while not safeCount == safeSum:
+        # Randlomy pick a square from the fringe
+        nextStep = randint(0,len(fringe_x) - 1)
+        curr_x = fringe_x[nextStep]
+        curr_y = fringe_y[nextStep]
+        # Randomly pick a direction to move in
         direction = randint(0,7)
         next_x = curr_x + adj_x[direction]
         next_y = curr_y + adj_y[direction]
@@ -63,8 +74,9 @@ def makeMap(rows, cols, numBats, numBombs):
             if world_map[next_x][next_y].bomb:
                 world_map[next_x][next_y].removeBomb()
                 safeCount = safeCount + 1
-            curr_x = next_x
-            curr_y = next_y
+                fringe_x.append(next_x)
+                fringe_y.append(next_y)
+
 
     '''
     # Place numBombs number of bombs randomly
@@ -175,7 +187,7 @@ def main():
 
 
     
-sys.argv = ['minesweeper.py', 8, 8, 3, 20]
+sys.argv = ['minesweeper.py', 20, 20, 3, 80]
 
 if __name__ == "__main__":
     main()

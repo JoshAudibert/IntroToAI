@@ -137,11 +137,11 @@ class Robot:
         for i in range(len(neighbors)):
             # add all the explored neighbors to the frontier as SearchNodes
             if(neighbors[i].checked):
-                neighborLoc = neighbor[i].loc
-                neighborDist = sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
-                frontier.append(SearchNode(neighborLoc, neighborDist, 1))
+                neighborLoc = self.neighbor[i].loc
+                neighborDist = self.sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
+                frontier.append(self.SearchNode(neighborLoc, neighborDist, 1))
         
-        frontier.sort(key = frontierSort)
+        frontier.sort(key = self.frontierSort)
         
         # while the goal hasn't been found, add the neighbors of the "best" node (A*)
         while(frontier[0].dist != 0):
@@ -150,11 +150,11 @@ class Robot:
             neighbors = self.currentMap.getNeighbors(node.loc)
             # add all explored neighbors to the frontier as SearchNodes
             if(neighbors[i].checked):
-                neighborLoc = neighbor[i].loc
-                neighborDist = sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
+                neighborLoc = self.neighbor[i].loc
+                neighborDist = self.sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
                 neighborCost = neighbors[i].cost + 1
-                frontier.append(SearchNode(neighborLoc, neighborDist, neigborCost))
-            frontier.sort(key = frontierSort)
+                frontier.append(self.SearchNode(neighborLoc, neighborDist, self.neigborCost))
+            frontier.sort(key = self.frontierSort)
             
         return frontier[0].cost
     

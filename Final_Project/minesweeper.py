@@ -26,7 +26,7 @@ def makeMap(rows, cols, numBats, numBombs):
     for j in range(cols):
         col = []
         for k in range(rows):
-            col.append(WorldSquare(0,0,1,0))
+            col.append(WorldSquare(0,0,True,0))
         world_map.append(col)
 
     # Calculate the number of safe squares needed

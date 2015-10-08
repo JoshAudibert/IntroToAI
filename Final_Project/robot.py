@@ -28,6 +28,7 @@ class RobotSquare:
     def __str__(self):
         return "%d, %d, %d, %d" % (self.bomb, self.battery)
 
+
 # Class to hold all of the pieces of the robot map
 class RobotMap:
     def __init__(self, robotSquares, width, height):
@@ -52,7 +53,6 @@ class RobotMap:
                 neighbors.append(self.currentMap[new_x][new_y])
         return neighbors
 
-
     # check whether a bombState has the correct number of bombs adjacent to each checked Square
     def isValidBombState(self, bombState):
         for square in self.checkedSquares:
@@ -62,7 +62,6 @@ class RobotMap:
             if countAdjBombs != square.adjBombs:
                 return False
         return True
-
 
     # Updates self.bombStates to reflect gained information from addedLoc
     def updateBombStates(self, addedLoc):
@@ -83,7 +82,6 @@ class RobotMap:
         # Remove invalid current bombStates
         self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
 
-
     # Update the probBombs of each RobotSquare in the fringe based on new info gained
     # at addedLoc
     def updateProbabilities(self, addedLoc):
@@ -100,6 +98,7 @@ class RobotMap:
         for sqr_i in range(len(self.fringe)):
             self.fringe[sqr_i].probBomb = float(fringeBombCounts[sqr_i])/len(self.bombStates)    
 
+
 class Robot:
     def __init__(self, initialBattery, location, robotMap):
         self.battery = initialBattery
@@ -115,10 +114,8 @@ class Robot:
             self.currentMap.append(mapRow)
         # set initial loca'''
 
-
-
     def changeBattery(self, difference):
-	self.battery += difference
+        self.battery += difference
 
     class SearchNode:
         def __init__(self, location, goalDist, pathCost):
@@ -138,11 +135,11 @@ class Robot:
         for i in range(len(neighbors)):
             # add all the explored neighbors to the frontier as SearchNodes
             if(neighbors[i].checked):
-                neighborLoc = neighbor[i].loc
-                neighborDist = sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
-                frontier.append(SearchNode(neighborLoc, neighborDist, 1))
+                neighborLoc = self.neighbor[i].loc
+                neighborDist = self.sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
+                frontier.append(self.SearchNode(neighborLoc, neighborDist, 1))
         
-        frontier.sort(key = frontierSort)
+        frontier.sort(key = self.frontierSort)
         
         # while the goal hasn't been found, add the neighbors of the "best" node (A*)
         while(frontier[0].dist != 0):
@@ -151,11 +148,11 @@ class Robot:
             neighbors = self.currentMap.getNeighbors(node.loc)
             # add all explored neighbors to the frontier as SearchNodes
             if(neighbors[i].checked):
-                neighborLoc = neighbor[i].loc
-                neighborDist = sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
+                neighborLoc = self.neighbor[i].loc
+                neighborDist = self.sqrt(pow((goal[0] - neighborLoc[0]), 2) + pow((goal[1] - neighborLoc[1]), 2))
                 neighborCost = neighbors[i].cost + 1
-                frontier.append(SearchNode(neighborLoc, neighborDist, neigborCost))
-            frontier.sort(key = frontierSort)
+                frontier.append(self.SearchNode(neighborLoc, neighborDist, self.neigborCost))
+            frontier.sort(key = self.frontierSort)
             
         return frontier[0].cost
     
@@ -167,20 +164,21 @@ class Robot:
 
 
     def move(self):
-	# we have current list of hypotheses (valid bomb states)
-	# and thus have bomb probabilities of fringe squares
+        # we have current list of hypotheses (valid bomb states)
+        # and thus have bomb probabilities of fringe squares
 
-	# based on probability map, choose best location to search
-	# TELEPORT!!
-	# search location
-	# update probabilities
-    	# update battery
-	# update fringe
+        # based on probability map, choose best location to search
+        # TELEPORT!!
+        # search location
+        # update probabilities
+            # update battery
+        # update fringe
         
         battery = False
         
         if(battery):
-            # assume utility function scoring fringe squares according to bomb probability and distance from current location
+            # assume utility function scoring fringe squares according to bomb probability and distance from current
+            # location
             sortedFringe = sorted(self.currentMap.fringe, key = utilityFn)
             destinationPicked = False
             for i in range(len(sortedFringe)):
@@ -219,5 +217,5 @@ class Robot:
             self.currentMap.updateProbabilities(self.loc)
             destinationPicked = True
 
-	def explode(self):
-		self.isDead = True
+    def explode(self):
+        self.isDead = True

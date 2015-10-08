@@ -22,11 +22,11 @@ def makeMap(rows, cols, numBats, numBombs):
     print "startingCol: ", startingCol
     print "startingRow: ", startingRow
 
-    #List to hold all of the world map pieces
+    # List to hold all of the world map pieces
     for j in range(cols):
         col = []
         for k in range(rows):
-            col.append(WorldSquare(0,0,1,0))
+            col.append(WorldSquare(0,0,True,0))
         world_map.append(col)
 
     # Calculate the number of safe squares needed
@@ -61,7 +61,7 @@ def makeMap(rows, cols, numBats, numBombs):
     # Keep going until all safe squares are placed
     while not safeCount == safeSum:
         # Randlomy pick a square from the fringe
-        nextStep = randint(0,len(fringe_x) - 1)
+        nextStep = randint(0, len(fringe_x) - 1)
         curr_x = fringe_x[nextStep]
         curr_y = fringe_y[nextStep]
         # Randomly pick a direction to move in

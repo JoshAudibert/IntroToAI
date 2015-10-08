@@ -9,7 +9,7 @@ def solve(worldMap):
 
     # Make instance of robot
     initialBattery = 20
-    m_robot = Robot(initialBattery, worldMap.getStartingPos(), woldMap.getHeight(), worldMap.getWidth())
+    m_robot = Robot(initialBattery, worldMap.getStartingPos(), worldMap.getHeight(), worldMap.getWidth())
     
     # tell robot about world map info of its starting location
     m_robot.move(worldMap.getStartingPos())
@@ -22,7 +22,7 @@ def solve(worldMap):
         # tell robot what happens when it moves to its new location
         m_robot.move(worldMap.getSquare(move_to))
         # check if the robot is dead or done exploring
-        if(m_robot.isDead or len(m_robot.fringe) == 0):
+        if m_robot.isDead or len(m_robot.fringe) == 0:
             # break loop
             bot_running = False
         
@@ -33,7 +33,7 @@ def makeMap(rows, cols, numBats, numBombs):
 
     world_map = []
 
-    # Neighboring Corrdinates
+    # Neighboring Coordinates
     numNeighbors = 8
     # (-1,-1) (0,-1) (1,-1)
     # (-1, 0) robot  (1, 0)
@@ -55,12 +55,12 @@ def makeMap(rows, cols, numBats, numBombs):
         world_map.append(col)
 
     # Calculate the number of safe squares needed
-    safeSum = rows*cols - numBombs;
-    safeCount = 0;
+    safeSum = rows*cols - numBombs
+    safeCount = 0
 
     # Ensure that the starting location is not a bomb
     world_map[startingCol][startingRow].removeBomb()
-    safeCount = safeCount + 1
+    safeCount += 1
 
     # Keep track of all coordinates of items in the fringe
     fringe_x = []
@@ -75,7 +75,7 @@ def makeMap(rows, cols, numBats, numBombs):
             # Check that neighbor is not safe already
             if world_map[next_x][next_y].bomb:
                 world_map[next_x][next_y].removeBomb()
-                safeCount = safeCount + 1
+                safeCount += 1
                 fringe_x.append(next_x)
                 fringe_y.append(next_y)
 
@@ -98,7 +98,7 @@ def makeMap(rows, cols, numBats, numBombs):
             # Check that neighbor is not safe already
             if world_map[next_x][next_y].bomb:
                 world_map[next_x][next_y].removeBomb()
-                safeCount = safeCount + 1
+                safeCount += 1
                 fringe_x.append(next_x)
                 fringe_y.append(next_y)
 
@@ -163,7 +163,7 @@ def checkMapLegality(world_map):
 # Class to hold all of the pieces of the world map
 class WorldMap:
     def __init__(self, worldSquares, startingLocation, numBombs, numBatteries, rows, cols):
-        self.worldSquares = worldSquares # list of all world map pieces
+        self.worldSquares = worldSquares  # list of all world map pieces
         self.startingLocation = startingLocation
         self.numBombs = numBombs
         self.numBatteries = numBatteries
@@ -205,7 +205,7 @@ class WorldMap:
     def getStartingPos(self):
         return self.startingLocation
         
-    def getSquare(self. loc):
+    def getSquare(self, loc):
         return self.worldSquares[loc[0]][loc[1]]
     
 
@@ -218,17 +218,17 @@ class WorldSquare:
         self.battery = battery # 0 if no battery, integer for amount of charge
 
     def removeBattery(self):
-        self.battery = false
+        self.battery = False
 
     def removeAdjBat(self):
-        if(self.adjBats > 0):
-            self.adjBats = self.adjBats - 1
+        if self.adjBats > 0:
+            self.adjBats -= 1
 
     def addAdjBat(self):
-        self.adjbats = self.adjBats + 1
+        self.adjBats += 1
 
     def addAdjBomb(self):
-        self.adjBombs = self.adjBombs + 1
+        self.adjBombs += 1
 
     def placeBomb(self):
         self.bomb = True

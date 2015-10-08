@@ -35,8 +35,15 @@ class RobotSquare:
 
 # Class to hold all of the pieces of the robot map
 class RobotMap:
-    def __init__(self, robotSquares, width, height):
-        self.robotSquares = robotSquares # holds the robot map pieces
+    def __init__(self, width, height):
+        self. robotSquares = [] # holds the robot map pieces
+        for x in range(width):
+        col = []
+        for y in range(height):
+            location = [x, y]
+            col.append(RobotSquare(location, False, 0, 0, False))
+        robotSquares.append([col])
+        
         self.checkedSquares = [] # list of searched RobotSquares
         self.fringe = [] # unsearched squares adjacent to searched squares
         self.bombStates = [] # list of 2D arrays of booleans
@@ -119,11 +126,11 @@ class RobotMap:
 
 
 class Robot:
-    def __init__(self, initialBattery, location, robotMap):
+    def __init__(self, initialBattery, location, mapHeight, mapWidth):
         self.battery = initialBattery
         self.loc = location # [0] is x, [1] is y (namedtuple?)
         self.isDead = False
-        self.robotMap = robotMap
+        self.robotMap = RobotMap(mapWidth, mapHeight)
         
         '''# initialize map using world map
         for row in range(self.robotMap.width):

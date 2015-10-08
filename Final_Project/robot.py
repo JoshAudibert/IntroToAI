@@ -117,7 +117,7 @@ class Robot:
 
 
     def changeBattery(self, difference):
-    self.battery += difference
+        self.battery += difference
 
     class SearchNode:
         def __init__(self, location, goalDist, pathCost):

@@ -22,14 +22,23 @@ def solve(worldMap):
     # Make instance of robot
     initialBattery = 20
     m_robot = Robot(initialBattery, worldMap.getStartingPos(), robot_map)
-
-    # Add 8 squares surrounding start and start to checked squares
-
-    # ORDER OF OPERATIONS:
-    # while not done and not dead:
-    #   robot.chooseNextLocation()
-    #   "search" this location by getting the WorldSquare fromt he WorldMap
-    #   robot.move(WorldSquare)
+    
+    # tell robot about world map info of its starting location
+    m_robot.move(worldMap.getStartingPos())
+    
+    bot_running = True
+    # while robot not dead and not finished exploring
+    while bot_running:
+        # ask robot where it wants to move
+        move_to = m_robot.chooseNextLocation().loc
+        # tell robot what happens when it moves to its new location
+        m_robot.move(worldMap.getSquare(move_to))
+        # check if the robot is dead or done exploring
+        if(m_robot.isDead or len(m_robot.fringe) == 0):
+            # break loop
+            bot_running = False
+        
+    # return / print statistics of robot performance
 
 
 def makeMap(rows, cols, numBats, numBombs):
@@ -207,6 +216,9 @@ class WorldMap:
 
     def getStartingPos(self):
         return self.startingLocation
+        
+    def getSquare(self. loc):
+        return self.worldSquares[loc[0]][loc[1]]
     
 
 class WorldSquare:

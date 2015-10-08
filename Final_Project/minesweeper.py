@@ -25,6 +25,7 @@ def solve(worldMap):
 
     # Add 8 squares surrounding start and start to checked squares
 
+
 def makeMap(rows, cols, numBats, numBombs):
 
     world_map = []
@@ -43,7 +44,7 @@ def makeMap(rows, cols, numBats, numBombs):
     print "startingCol: ", startingCol
     print "startingRow: ", startingRow
 
-    #List to hold all of the world map pieces
+    # List to hold all of the world map pieces
     for j in range(cols):
         col = []
         for k in range(rows):
@@ -81,7 +82,7 @@ def makeMap(rows, cols, numBats, numBombs):
 
     # Keep going until all safe squares are placed
     while not safeCount == safeSum:
-        # Randlomy pick a square from the fringe
+        # Randomly pick a square from the fringe
         nextStep = randint(0,len(fringe_x) - 1)
         curr_x = fringe_x[nextStep]
         curr_y = fringe_y[nextStep]
@@ -128,6 +129,7 @@ def makeMap(rows, cols, numBats, numBombs):
     
     return startingMap
 
+
 # Checks map to ensure there are no closed off areas
 def checkMapLegality(world_map):
     
@@ -153,6 +155,7 @@ def checkMapLegality(world_map):
     '''
     
     pass
+
 
 # Class to hold all of the pieces of the world map
 class WorldMap:
@@ -237,7 +240,6 @@ class WorldSquare:
 
     def __str__(self):
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
-
 
 
 def main():

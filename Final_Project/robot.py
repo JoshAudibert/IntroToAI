@@ -27,6 +27,7 @@ class RobotSquare:
     def __str__(self):
         return "%d, %d, %d, %d" % (self.bomb, self.battery)
 
+
 # Class to hold all of the pieces of the robot map
 class RobotMap:
     def __init__(self, robotSquares, width, height):
@@ -51,7 +52,6 @@ class RobotMap:
                 neighbors.append(self.currentMap[new_x][new_y])
         return neighbors
 
-
     # check whether a bombState has the correct number of bombs adjacent to each checked Square
     def isValidBombState(self, bombState):
         for square in self.checkedSquares:
@@ -61,7 +61,6 @@ class RobotMap:
             if countAdjBombs != square.adjBombs:
                 return False
         return True
-
 
     # Updates self.bombStates to reflect gained information from addedLoc
     def updateBombStates(self, addedLoc):
@@ -82,7 +81,6 @@ class RobotMap:
         # Remove invalid current bombStates
         self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
 
-
     # Update the probBombs of each RobotSquare in the fringe based on new info gained
     # at addedLoc
     def updateProbabilities(self, addedLoc):
@@ -99,6 +97,7 @@ class RobotMap:
         for sqr_i in range(len(self.fringe)):
             self.fringe[sqr_i].probBomb = float(fringeBombCounts[sqr_i])/len(self.bombStates)    
 
+
 class Robot:
     def __init__(self, initialBattery, location, robotMap):
         self.battery = initialBattery
@@ -113,8 +112,6 @@ class Robot:
                 mapRow.append(RobotSquare([col, row], False, 0, 0, 0, False))
             self.currentMap.append(mapRow)
         # set initial loca'''
-
-
 
     def changeBattery(self, difference):
         self.battery += difference

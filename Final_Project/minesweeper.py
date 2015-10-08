@@ -1,11 +1,32 @@
 from random import randint
+from robot import Robot
+from robot import RobotSquare
+from robot import RobotMap
 import time
 import sys
 
+def solve(worldMap):
+
+    # Make robot map from world map
+    robotSquares = []
+    for x in range(worldMap.getWidth()):
+        col = []
+        for y in range(worldMap.getHeight()):
+            location = [x, y]
+            col.append(RobotSquare(location, False, 0, 0, False))
+        robotSquares.append([col])
+
+    # Make Instance of robot map
+    robot_map = RobotMap(robotSquares, worldMap.getWidth(), worldMap.getHeight())
+
+    # Make instance of robot
+    initialBattery = 20
+    m_robot = Robot(initialBattery, worldMap.getStartingPos(), robot_map)
+
+    # Add 8 squares surrounding start and start to checked squares
+
 def makeMap(rows, cols, numBats, numBombs):
 
-    global startingCol
-    global startingRow
     world_map = []
 
     # Neighboring Corrdinates
@@ -100,17 +121,12 @@ def makeMap(rows, cols, numBats, numBombs):
             if 0 <= next_x < cols and 0 <= next_y < rows:
             #if((next_x >= 0) and (next_x < cols)) and ((next_y >= 0) and (next_y < rows)):
                 world_map[next_x][next_y].addAdjBomb()
-
     '''
-    # Print out the current map
-    for y in range(rows):
-        printRow = []
-        for x in range(cols):
-            printRow.append(world_map[x][y].printBombs())
-        print printRow
-        
+    startingLocation = [startingCol, startingRow]
+    startingMap = WorldMap(world_map, startingLocation, numBombs, numBats, rows, cols)
+    startingMap.printMap()
     
-    return world_map
+    return startingMap
 
 # Checks map to ensure there are no closed off areas
 def checkMapLegality(world_map):
@@ -140,9 +156,9 @@ def checkMapLegality(world_map):
 
 # Class to hold all of the pieces of the world map
 class WorldMap:
-    def __init__(self, robotSquares, startingLocation, numBombs, numBatteries, rows, cols):
-        self. worldSquares = worldSquares # list of all world map pieces
-        self.startingLocation = startinLocation
+    def __init__(self, worldSquares, startingLocation, numBombs, numBatteries, rows, cols):
+        self.worldSquares = worldSquares # list of all world map pieces
+        self.startingLocation = startingLocation
         self.numBombs = numBombs
         self.numBatteries = numBatteries
         self.rows = rows
@@ -151,10 +167,10 @@ class WorldMap:
     # Print out the current map
     def printMap(self):   
         for y in range(self.rows):
-        printRow = []
-        for x in range(self.cols):
-            printRow.append(self.world_Squares[x][y].printBombs())
-        print printRow
+            printRow = []
+            for x in range(self.cols):
+                printRow.append(self.worldSquares[x][y].printBombs())
+            print printRow
 
     def removeBat(self, loc):
         self.worldSquares[loc[0]][loc[1]].removeBattery()
@@ -163,22 +179,25 @@ class WorldMap:
             neighbors[n].removeAdjBat
 
     # find all neighbors within the map
-    def getNeighbors(self, loc):	
-	delta_x = [-1, 0, 1,-1, 1,-1, 0, 1]
-	delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
-	neighbors = []
-	for i in range(len(delta_x)):
+    def getNeighbors(self, loc):    
+        delta_x = [-1, 0, 1,-1, 1,-1, 0, 1]
+        delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
+        neighbors = []
+        for i in range(len(delta_x)):
             new_x = loc[0] + delta_x
-	    new_y = loc[1] + delta_y
-	    if 0 <= new_x < self.cols and 0 <= new_y < self.rows:
-		neighbors.append(self.worldSquares[new_x][new_y])
-	return neighbors
+            new_y = loc[1] + delta_y
+            if 0 <= new_x < self.cols and 0 <= new_y < self.rows:
+                neighbors.append(self.worldSquares[new_x][new_y])
+        return neighbors
 
     def getWidth(self):
         return self.cols
 
     def getHeight(self):
         return self.rows
+
+    def getStartingPos(self):
+        return self.startingLocation
     
 
 class WorldSquare:
@@ -228,8 +247,9 @@ def main():
     numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
-
-
+    
+    # move to lowest probability of a bomb in fringe break ties  sort list
+    solve(worldMap)
     
 sys.argv = ['minesweeper.py', 20, 20, 3, 80]
 

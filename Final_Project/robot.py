@@ -100,7 +100,6 @@ class RobotMap:
             self.fringe[sqr_i].probBomb = float(fringeBombCounts[sqr_i])/len(self.bombStates)    
 
 class Robot:
-<<<<<<< HEAD
     def __init__(self, initialBattery, location, robotMap):
         self.battery = initialBattery
         self.loc = location # [0] is x, [1] is y (namedtuple?)
@@ -117,8 +116,8 @@ class Robot:
 
 
 
-	def changeBattery(self, difference):
-		self.battery += difference
+    def changeBattery(self, difference):
+	self.battery += difference
 
     class SearchNode:
         def __init__(self, location, goalDist, pathCost):
@@ -159,16 +158,16 @@ class Robot:
             
         return frontier[0].cost
     
-	def move(self):
-		# we have current list of hypotheses (valid bomb states)
-		# and thus have bomb probabilities of fringe squares
+    def move(self):
+	# we have current list of hypotheses (valid bomb states)
+	# and thus have bomb probabilities of fringe squares
 
-		# based on probability map, choose best location to search
-		# TELEPORT!!
-		# search location
-		# update probabilities
-		# update battery
-		# update fringe
+	# based on probability map, choose best location to search
+	# TELEPORT!!
+	# search location
+	# update probabilities
+    	# update battery
+	# update fringe
         
         battery = False
         

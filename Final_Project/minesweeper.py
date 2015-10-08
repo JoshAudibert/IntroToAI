@@ -25,6 +25,13 @@ def solve(worldMap):
 
     # Add 8 squares surrounding start and start to checked squares
 
+    # ORDER OF OPERATIONS:
+    # while not done and not dead:
+    #   robot.chooseNextLocation()
+    #   "search" this location by getting the WorldSquare fromt he WorldMap
+    #   robot.move(WorldSquare)
+
+
 def makeMap(rows, cols, numBats, numBombs):
 
     world_map = []
@@ -44,10 +51,10 @@ def makeMap(rows, cols, numBats, numBombs):
     print "startingRow: ", startingRow
 
     #List to hold all of the world map pieces
-    for j in range(cols):
+    for c in range(cols):
         col = []
-        for k in range(rows):
-            col.append(WorldSquare(0,0,True,0))
+        for r in range(rows):
+            col.append(WorldSquare([c, r],0,0,True,0))
         world_map.append(col)
 
     # Calculate the number of safe squares needed
@@ -201,7 +208,8 @@ class WorldMap:
     
 
 class WorldSquare:
-    def __init__(self, adjBombs, adjBats, bomb, battery):
+    def __init__(self, location, adjBombs, adjBats, bomb, battery):
+        self.loc = location
         self.adjBombs = adjBombs
         self.adjBats = adjBats
         self.bomb = bomb 

@@ -1,3 +1,4 @@
+from minesweeper import WorldSquare
 from random import randint
 import time
 import sys
@@ -158,6 +159,13 @@ class Robot:
             
         return frontier[0].cost
     
+
+    def chooseNextLocation(self):
+        # sort fringe by probability of bomb
+        sortedFringe = sorted(self.currentMap.fringe, key = lambda BotSquare: BotSquare.probBomb)
+        return sortedFringe[0]
+
+
     def move(self):
 	# we have current list of hypotheses (valid bomb states)
 	# and thus have bomb probabilities of fringe squares
@@ -199,7 +207,8 @@ class Robot:
             #sort fringe by probability of bomb
             sortedFringe = sorted(self.currentMap.fringe, key = lambda BotSquare: BotSquare.probBomb)
             self.loc = sortedFringe[i].loc
-            # TODO: search location
+            # search location
+            self.currentMap.checkedSquares.append(WorldSquare(self.loc, ))
             # assuming newLoc is the world square of the new location
             # add current location to checked squares, should probably also check for dying
             self.currentMap.checkedSquares.append(RobotSquare(self.loc, False, 0, newLoc.bomb, 0, True))

@@ -36,13 +36,13 @@ class RobotSquare:
 # Class to hold all of the pieces of the robot map
 class RobotMap:
     def __init__(self, width, height):
-        self. robotSquares = [] # holds the robot map pieces
+        self.robotSquares = [] # holds the robot map pieces
         for x in range(width):
-        col = []
-        for y in range(height):
-            location = [x, y]
-            col.append(RobotSquare(location, False, 0, 0, False))
-        robotSquares.append([col])
+            col = []
+            for y in range(height):
+                location = [x, y]
+                col.append(RobotSquare(location, False, 0, 0, False))
+            robotSquares.append([col])
         
         self.checkedSquares = [] # list of searched RobotSquares
         self.fringe = [] # unsearched squares adjacent to searched squares
@@ -132,14 +132,6 @@ class Robot:
         self.isDead = False
         self.robotMap = RobotMap(mapWidth, mapHeight)
         
-        '''# initialize map using world map
-        for row in range(self.robotMap.width):
-            mapRow = []
-            for col in range(self.robotMap.height):
-                mapRow.append(RobotSquare([col, row], False, 0, 0, 0, False))
-            self.robotMap.append(mapRow)
-        # set initial loca'''
-
     def changeBattery(self, difference):
         self.battery += difference
 

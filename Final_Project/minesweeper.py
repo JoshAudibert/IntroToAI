@@ -7,21 +7,9 @@ import sys
 
 def solve(worldMap):
 
-    # Make robot map from world map
-    robotSquares = []
-    for x in range(worldMap.getWidth()):
-        col = []
-        for y in range(worldMap.getHeight()):
-            location = [x, y]
-            col.append(RobotSquare(location, False, 0, 0, False))
-        robotSquares.append([col])
-
-    # Make Instance of robot map
-    robot_map = RobotMap(robotSquares, worldMap.getWidth(), worldMap.getHeight())
-
     # Make instance of robot
     initialBattery = 20
-    m_robot = Robot(initialBattery, worldMap.getStartingPos(), robot_map)
+    m_robot = Robot(initialBattery, worldMap.getStartingPos(), woldMap.getHeight(), worldMap.getWidth())
     
     # tell robot about world map info of its starting location
     m_robot.move(worldMap.getStartingPos())

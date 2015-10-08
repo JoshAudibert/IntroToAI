@@ -1,5 +1,6 @@
 from minesweeper import WorldSquare
 from random import randint
+import itertools
 import time
 import sys
 
@@ -63,15 +64,18 @@ class RobotMap:
                 return False
         return True
 
-    # Updates self.bombStates to reflect gained information from addedLoc
-    def updateBombStates(self, addedLoc):
-        # construct list of new adjacent unsearched squares
-        newAdjUnsearched = []
-        neighbors = self.getNeighbors(addedLoc)
-        for neighbor in neighbors:
-            if not neighbor.checked and neighbor not in self.fringe:
-                newAdjUnsearched.append(neighbor)
+    def createInitialBombStates(self, newNeighbors, adjBombs):
+        bombStates = []
+        for comb in itertools.combinations(newNeighbors, adjBombs):
+            # initialize bombstate to 2D array of False
+            bombState = [[False for col in range(self.width)] for row in range(self.height)]
+            for neighbor in comb:
+                bombState[neighbor.loc[0]][neighbor.loc[1]] = True
+            bombStates.append(bombState)
+        return bombStates
 
+    # Updates self.bombStates to reflect gained information from addedLoc
+    def updateBombStates(self, newAdjUnsearched):
         for newSquare in newAdjUnsearched:
             # Add new bombStates
             for bombState in self.bombStates:
@@ -84,8 +88,20 @@ class RobotMap:
 
     # Update the probBombs of each RobotSquare in the fringe based on new info gained
     # at addedLoc
-    def updateProbabilities(self, addedLoc):
-        self.updateBombStates(addedLoc)
+    def updateProbabilities(self, world_square):
+        # construct list of new adjacent unsearched squares
+        newAdjUnsearched = []
+        neighbors = self.getNeighbors(world_square.loc)
+        for neighbor in neighbors:
+            if not neighbor.checked and neighbor not in self.fringe:
+                newAdjUnsearched.append(neighbor)
+
+        if not self.bombStates:
+            # no bomb states, first piece of info
+            self.bombStates = self.createInitialBombStates(newAdjUnsearched, world_square.adjBombs)
+        else:
+            self.updateBombStates(newAdjUnsearched)
+
         # go through bomb states and count how many times a bomb is in each fringe square
         fringeBombCounts = [0] * len(self.fringe)
         for bombState in self.bombStates:
@@ -163,7 +179,7 @@ class Robot:
         return sortedFringe[0]
 
 
-    def move(self):
+    def move(self, world_square):
         # we have current list of hypotheses (valid bomb states)
         # and thus have bomb probabilities of fringe squares
 
@@ -202,11 +218,9 @@ class Robot:
                 # could not find a fringe square we can get to, should end run somehow
                 pass
         else:
-            #sort fringe by probability of bomb
-            sortedFringe = sorted(self.currentMap.fringe, key = lambda BotSquare: BotSquare.probBomb)
             self.loc = sortedFringe[i].loc
             # search location
-            self.currentMap.checkedSquares.append(WorldSquare(self.loc, ))
+            self.currentMap.checkedSquares.append(world_square)
             # assuming newLoc is the world square of the new location
             # add current location to checked squares, should probably also check for dying
             self.currentMap.checkedSquares.append(RobotSquare(self.loc, False, 0, newLoc.bomb, 0, True))
@@ -214,7 +228,7 @@ class Robot:
             # self.currentMap.fringe.remove(self.loc)
             # add neighbors of current location to fringe
             self.currentMap.fringe.extend(self.currentMap.getNeighbors(self.loc))
-            self.currentMap.updateProbabilities(self.loc)
+            self.currentMap.updateProbabilities(world_square)
             destinationPicked = True
 
     def explode(self):

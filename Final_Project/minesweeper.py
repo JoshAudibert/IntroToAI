@@ -138,6 +138,49 @@ def checkMapLegality(world_map):
     
     pass
 
+# Class to hold all of the pieces of the world map
+class WorldMap:
+    def __init__(self, robotSquares, startingLocation, numBombs, numBatteries, rows, cols):
+        self. worldSquares = worldSquares # list of all world map pieces
+        self.startingLocation = startinLocation
+        self.numBombs = numBombs
+        self.numBatteries = numBatteries
+        self.rows = rows
+        self.cols = cols
+
+    # Print out the current map
+    def printMap(self):   
+        for y in range(self.rows):
+        printRow = []
+        for x in range(self.cols):
+            printRow.append(self.world_Squares[x][y].printBombs())
+        print printRow
+
+    def removeBat(self, loc):
+        self.worldSquares[loc[0]][loc[1]].removeBattery()
+        neighbors = self.getNeighbors(loc)
+        for n in range(len(neighbors)):
+            neighbors[n].removeAdjBat
+
+    # find all neighbors within the map
+    def getNeighbors(self, loc):	
+	delta_x = [-1, 0, 1,-1, 1,-1, 0, 1]
+	delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
+	neighbors = []
+	for i in range(len(delta_x)):
+            new_x = loc[0] + delta_x
+	    new_y = loc[1] + delta_y
+	    if 0 <= new_x < self.cols and 0 <= new_y < self.rows:
+		neighbors.append(self.worldSquares[new_x][new_y])
+	return neighbors
+
+    def getWidth(self):
+        return self.cols
+
+    def getHeight(self):
+        return self.rows
+    
+
 class WorldSquare:
     def __init__(self, adjBombs, adjBats, bomb, battery):
         self.adjBombs = adjBombs
@@ -149,7 +192,8 @@ class WorldSquare:
         self.battery = false
 
     def removeAdjBat(self):
-        self.adjBats = self.adjBats - 1
+        if(self.adjBats > 0):
+            self.adjBats = self.adjBats - 1
 
     def addAdjBat(self):
         self.adjbats = self.adjBats + 1

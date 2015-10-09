@@ -25,6 +25,12 @@ def solve(worldMap):
             # break loop
             bot_running = False
         
+    if m_robot.isDead:
+        print "THE ROBOT EXPLODED AT LOCATION %s!" % str(move_to)
+    else:
+        print "THE ROBOT RAN OUT OF FRINGE"
+    print "***Actual World Map:"
+    worldMap.printMap()
     # return / print statistics of robot performance
 
 
@@ -95,6 +101,14 @@ def makeMap(rows, cols, numBats, numBombs):
                 fringe_y.append(next_y)
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
+     # update adjacent bomb counts
+    for r in range(rows):
+        for c in range(cols):
+            if world_map[c][r].bomb:
+                neighbors = startingMap.getNeighbors([c, r])
+                for neighbor in neighbors:
+                    if not neighbor.bomb:
+                        neighbor.addAdjBomb()
     startingMap.printMap()
     
     return startingMap
@@ -156,8 +170,8 @@ class WorldMap:
         delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
         neighbors = []
         for i in range(len(delta_x)):
-            new_x = loc[0] + delta_x
-            new_y = loc[1] + delta_y
+            new_x = loc[0] + delta_x[i]
+            new_y = loc[1] + delta_y[i]
             if 0 <= new_x < self.cols and 0 <= new_y < self.rows:
                 neighbors.append(self.worldSquares[new_x][new_y])
         return neighbors
@@ -219,7 +233,7 @@ def main():
     # move to lowest probability of a bomb in fringe break ties  sort list
     solve(worldMap)
     
-sys.argv = ['minesweeper.py', 20, 20, 3, 80]
+sys.argv = ['minesweeper.py', 8, 8, 3, 10]
 
 if __name__ == "__main__":
     main()

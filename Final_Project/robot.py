@@ -1,4 +1,4 @@
-from minesweeper import WorldSquare
+#from minesweeper import WorldSquare
 from random import randint
 import itertools
 import time
@@ -27,7 +27,7 @@ class RobotSquare:
         self.probBat = probability
 
     def __str__(self):
-        return "%d, %d, %d, %d" % (self.bomb, self.battery)
+        return "%s, %d, %d, %d" % (self.loc, self.flagged, self.adjBombs, self.adjBatteries)
 
     def __eq__(self, other):
         return self.loc == other.loc
@@ -35,33 +35,30 @@ class RobotSquare:
 
 # Class to hold all of the pieces of the robot map
 class RobotMap:
-    def __init__(self, width, height):
-        self.robotSquares = [] # holds the robot map pieces
-        for x in range(width):
-            col = []
-            for y in range(height):
-                location = [x, y]
-                col.append(RobotSquare(location, False, 0, 0, False))
-            self.robotSquares.append([col])
-        
+    def __init__(self, robotLoc, rows, cols):
+        # holds the robot map pieces
+        self.robotSquares = [[RobotSquare([x, y],False,0,0,False) for y in range(rows)] for x in range(cols)]
         self.checkedSquares = [] # list of searched RobotSquares
-        self.fringe = [] # unsearched squares adjacent to searched squares
+        self.fringe = [self.getSquare(robotLoc)] # unsearched squares adjacent to searched squares
         self.bombStates = [] # list of 2D arrays of booleans
-        self.width = width
-        self.height = height
+        self.rows = rows
+        self.cols = cols
+
+    def getSquare(self, loc):
+        return self.robotSquares[loc[0]][loc[1]]
 
     def getNeighbors(self, loc):
         # find all neighbors within the map
-        width = len(self.currentMap[0])
-        height = len(self.currentMap)
+        width = len(self.robotSquares[0])
+        height = len(self.robotSquares)
         delta_x = [-1, 0, 1,-1, 1,-1, 0, 1]
         delta_y = [-1,-1,-1, 0, 0, 1, 1, 1]
         neighbors = []
         for i in range(len(delta_x)):
-            new_x = loc[0] + delta_x
-            new_y = loc[1] + delta_y
+            new_x = loc[0] + delta_x[i]
+            new_y = loc[1] + delta_y[i]
             if 0 <= new_x < width and 0 <= new_y < height:
-                neighbors.append(self.currentMap[new_x][new_y])
+                neighbors.append(self.robotSquares[new_x][new_y])
         return neighbors
 
     # check whether a bombState has the correct number of bombs adjacent to each checked Square
@@ -78,7 +75,7 @@ class RobotMap:
         bombStates = []
         for comb in itertools.combinations(newNeighbors, adjBombs):
             # initialize bombstate to 2D array of False
-            bombState = [[False for col in range(self.width)] for row in range(self.height)]
+            bombState = [[False for col in range(self.cols)] for row in range(self.rows)]
             for neighbor in comb:
                 bombState[neighbor.loc[0]][neighbor.loc[1]] = True
             bombStates.append(bombState)
@@ -126,11 +123,11 @@ class RobotMap:
 
 
 class Robot:
-    def __init__(self, initialBattery, location, mapHeight, mapWidth):
+    def __init__(self, initialBattery, location, rows, cols):
         self.battery = initialBattery
         self.loc = location # [0] is x, [1] is y (namedtuple?)
         self.isDead = False
-        self.robotMap = RobotMap(mapWidth, mapHeight)
+        self.robotMap = RobotMap(location, rows, cols)
         
     def changeBattery(self, difference):
         self.battery += difference
@@ -221,11 +218,14 @@ class Robot:
             self.loc = world_square.loc
             # search location
             # update RobotSquare
-            self.robotMap[self.loc[0]][self.loc[1]].setChecked()
+            self.robotMap.getSquare(self.loc).setChecked()
             # add WorldSquare to checkedSquares
             self.robotMap.checkedSquares.append(world_square)
             # remove current location from fringe
-            self.robotMap.fringe.remove(self.robotMap[self.loc[0]][self.loc[1]])
+            for rs in self.robotMap.fringe:
+                print rs
+            print self.loc
+            self.robotMap.fringe.remove(self.robotMap.getSquare(self.loc))
             # add neighbors of current location to fringe
             neighbors = self.robotMap.getNeighbors(self.loc)
             for neighbor in neighbors:

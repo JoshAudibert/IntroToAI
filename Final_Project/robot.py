@@ -3,6 +3,7 @@ from random import randint
 import itertools
 import time
 import sys
+from util import debug
 
 class RobotSquare:
     def __init__(self, location, flagged, probBomb, probBat, checked):
@@ -46,20 +47,20 @@ class RobotMap:
 
     def printBombStates(self):
         for i in range(len(self.bombStates)):
-            print "***Bomb State #" + str(i)
+            debug("***Bomb State #" + str(i))
             for y in range(len(self.bombStates[i])):
                 p = []
                 for x in range(len(self.bombStates[i][0])):
                     p.append(self.bombStates[i][x][y])
-                print p
+                debug(p)
 
     def printBombProbabilities(self):
-        print "***BOMB PROBABILITIES***"
+        debug("***BOMB PROBABILITIES***")
         for y in range(len(self.robotSquares)):
             p = []
             for x in range(len(self.robotSquares[0])):
                 p.append(self.robotSquares[x][y].probBomb)
-            print p
+            debug(p)
 
 
     def getSquare(self, loc):
@@ -247,9 +248,9 @@ class Robot:
             for neighbor in neighbors:
                 if not neighbor.checked and not neighbor.flagged and neighbor not in self.robotMap.fringe:
                     self.robotMap.fringe.append(neighbor)
-            print "Fringe:"
+            debug("Fringe:")
             for square in self.robotMap.fringe:
-                print square
+                debug(square)
 
     def explode(self):
         self.isDead = True

@@ -4,6 +4,7 @@ from robot import RobotSquare
 from robot import RobotMap
 import time
 import sys
+from util import debug
 
 def solve(worldMap):
     # Make instance of robot
@@ -151,12 +152,12 @@ class WorldMap:
         self.cols = cols
 
     # Print out the current map
-    def printMap(self):   
+    def printMap(self):
         for y in range(self.rows):
             printRow = []
             for x in range(self.cols):
                 printRow.append(self.worldSquares[x][y].printBombs())
-            print printRow
+            debug(printRow)
 
     def removeBat(self, loc):
         self.worldSquares[loc[0]][loc[1]].removeBattery()

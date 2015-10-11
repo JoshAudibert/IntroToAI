@@ -1,4 +1,4 @@
-debugOn = False
+debugOn = True
 
 def debug(words):
     global debugOn

@@ -5,6 +5,7 @@ from robot import RobotMap
 import time
 import sys
 from util import debug
+from util import analysis
 
 def solve(worldMap):
     # Make instance of robot
@@ -111,7 +112,9 @@ def makeMap(rows, cols, numBats, numBombs):
                     if not neighbor.bomb:
                         neighbor.addAdjBomb()
     startingMap.printMap()
-    
+
+    analysis("Safe squares =" + safeCount)
+    analysis("Numb bombs =" + numBombs)
     return startingMap
 
 

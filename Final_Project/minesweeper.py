@@ -41,10 +41,13 @@ def printAnalysis(robot, worldMap):
         else:
             print "THE ROBOT RAN OUT OF BATTERY AT LOCATION %s" % str(robot.loc)
     else:
+        print "The robot searched %s/%s safe squares" % (str(numCheckedSquares), str(numTotalSafeSquares))
         print "THE ROBOT RAN OUT OF FRINGE"
 
     print "***Actual World Map:"
     worldMap.printMap()
+    print "***Robot's Map:"
+    robot.robotMap.printMap(robot.loc)
 
 
 def makeMap(rows, cols, numBats, numBombs):

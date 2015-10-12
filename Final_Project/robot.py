@@ -274,21 +274,16 @@ class Robot:
         distance = max(abs(self.loc[0] - botSquare.loc[0]), abs(self.loc[1] - botSquare.loc[1]))
         bombProb = botSquare.probBomb
         batProb = botSquare.probBat
-        return 1.0 - bombProb
+        return (1.0 - bombProb) + (1.0 - float(distance)/self.battery)
 
     def chooseNextLocation(self):
-        self.battery = 1000
+        #self.battery = 1000
+
         sortedFringe = sorted(self.robotMap.fringe, key=self.utilityFn, reverse=True)
-        destinationPicked = False
         for fringe_square in sortedFringe:
             pathCost = self.findPath(fringe_square)
-            if pathCost < self.battery:
+            if pathCost <= self.battery:
                 return fringe_square
-                destinationPicked = True
-                
-        if destinationPicked == False:
-            # could not find a fringe square we can get to, should end run somehow
-            pass
 
     def move(self, world_square):
         if world_square.loc != self.loc:
@@ -299,7 +294,7 @@ class Robot:
         self.loc = world_square.loc
         # search location
         # update RobotSquare
-        if world_square.bomb:
+        if world_square.bomb or self.battery == 0:
             self.explode()
             return
         # found a battery! Update the current bombStates
@@ -334,5 +329,12 @@ class Robot:
         for square in self.robotMap.fringe:
             debug(square)
 
+    def cantTouchThis(self):
+        for fringe_square in self.robotMap.fringe:
+            pathCost = self.findPath(fringe_square)
+            if pathCost <= self.battery:
+                return False
+        return True
+    
     def explode(self):
         self.isDead = True

@@ -23,7 +23,8 @@ def solve(worldMap):
         # ask robot where it wants to move
         move_to = m_robot.chooseNextLocation().loc
         world_square = worldMap.getSquare(move_to)
-        print "Move to:", move_to
+	debug("Move to: ")
+	debug(move_to)
         # update world battery counts and removed a battery if necessary
         if world_square.battery:
             m_robot.changeBattery(world_square.battery)
@@ -31,7 +32,7 @@ def solve(worldMap):
         # tell robot what happens when it moves to its new location
         m_robot.move(world_square)
         # check if the robot is dead or done exploring
-        if m_robot.isDead or len(m_robot.robotMap.fringe) == 0:
+        if m_robot.isDead or len(m_robot.robotMap.fringe) == 0 or m_robot.cantTouchThis():
             # break loop
             bot_running = False
         print ""
@@ -89,9 +90,7 @@ def makeMap(rows, cols, numBats, numBombs):
             bomb_y = randint(0, rows - 1)
 
         world_map[bomb_x][bomb_y].placeBomb() # Add bomb
-        print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
-
-    print "done"
+        #print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
 
     # Place numBatteries number of batteries randomly
     for i in range(numBats):
@@ -251,6 +250,9 @@ class WorldSquare:
         self.bomb = bomb 
         self.battery = battery # 0 if no battery, integer for amount of charge
 
+    def removeBattery(self):
+        self.battery = 0
+
     def removeAdjBat(self):
         if self.adjBats > 0:
             self.adjBats -= 1
@@ -298,6 +300,7 @@ def main():
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
     while(checkMap(worldMap)):
         worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+    print "found valid map"
     solve(worldMap)
     
 sys.argv = ['minesweeper.py', 6, 6, 5, 10]

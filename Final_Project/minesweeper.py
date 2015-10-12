@@ -162,6 +162,10 @@ class WorldMap:
                 printRow.append(self.worldSquares[x][y].printBombs())
             debug(printRow)
 
+    def mapSize(self):
+        size = self.rows*self.cols
+        analysis(size)
+
     def removeBat(self, loc):
         self.worldSquares[loc[0]][loc[1]].removeBattery()
         neighbors = self.getNeighbors(loc)

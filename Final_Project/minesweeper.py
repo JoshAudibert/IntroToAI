@@ -41,10 +41,13 @@ def printAnalysis(robot, worldMap):
         else:
             print "THE ROBOT RAN OUT OF BATTERY AT LOCATION %s" % str(robot.loc)
     else:
+        print "The robot searched %s/%s safe squares" % (str(numCheckedSquares), str(numTotalSafeSquares))
         print "THE ROBOT RAN OUT OF FRINGE"
 
     print "***Actual World Map:"
     worldMap.printMap()
+    print "***Robot's Map:"
+    robot.robotMap.printMap(robot.loc)
 
 
 def makeMap(rows, cols, numBats, numBombs):
@@ -217,13 +220,12 @@ class WorldSquare:
 
 
 def main():
-    # Command line format: minesweeper.py puzzleHeight puzzleWidth bumbBatteries numBombs
+    # Command line format: minesweeper.py puzzleHeight puzzleWidth numBatteries numBombs
     puzzleHeight = int(sys.argv[1])
     puzzleWidth = int(sys.argv[2])
     numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
-    # move to lowest probability of a bomb in fringe break ties  sort list
     solve(worldMap)
     
 sys.argv = ['minesweeper.py', 8, 8, 3, 10]

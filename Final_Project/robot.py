@@ -47,6 +47,21 @@ class RobotMap:
         self.rows = rows
         self.cols = cols
 
+    # Print out the current map
+    def printMap(self, robotLoc):
+        for y in range(self.rows):
+            printRow = []
+            for x in range(self.cols):
+                val = "*"
+                if self.robotSquares[x][y].checked:
+                    val = "C"
+                if self.robotSquares[x][y].flagged:
+                    val = "B"
+                if self.robotSquares[x][y].loc == robotLoc:
+                    val = "R"
+                printRow.append(val)
+            print printRow
+
     def printBombStates(self):
         for i in range(len(self.bombStates)):
             debug("***Bomb State #" + str(i))
@@ -227,7 +242,7 @@ class Robot:
         # update fringe
         
         global useBattery
-        useBattery = True
+        useBattery = False
         
         if useBattery:
             if(world_square.loc != self.loc):

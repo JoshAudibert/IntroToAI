@@ -17,15 +17,24 @@ def solve(worldMap):
     bot_running = True
     # while robot not dead and not finished exploring
     while bot_running:
+        print "STARTING LOOP"
+        print "Battery map:"
+        worldMap.printBatteriesMap()
         # ask robot where it wants to move
         move_to = m_robot.chooseNextLocation().loc
+        world_square = worldMap.getSquare(move_to)
         print "Move to:", move_to
+        # update world battery counts and removed a battery if necessary
+        if world_square.battery:
+            m_robot.changeBattery(world_square.battery)
+            worldMap.removeBat(move_to)
         # tell robot what happens when it moves to its new location
-        m_robot.move(worldMap.getSquare(move_to))
+        m_robot.move(world_square)
         # check if the robot is dead or done exploring
         if m_robot.isDead or len(m_robot.robotMap.fringe) == 0:
             # break loop
             bot_running = False
+        print ""
     
     printAnalysis(m_robot, worldMap)
 
@@ -89,7 +98,7 @@ def makeMap(rows, cols, numBats, numBombs):
         bat_x = randint(0, cols - 1)
         bat_y = randint(0, rows - 1)       
 
-        world_map[bat_x][bat_y].placeBat() # Add bomb
+        world_map[bat_x][bat_y].placeBat(randint(2, 5)) # Add battery
         print "Bat location: (%d, %d)" % (bat_x, bat_y)
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
@@ -104,8 +113,7 @@ def makeMap(rows, cols, numBats, numBombs):
             if world_map[c][r].battery:
                 neighbors = startingMap.getNeighbors([c, r])
                 for neighbor in neighbors:
-                    if not neighbor.battery:
-                        neighbor.addAdjBat()
+                    neighbor.addAdjBat()
 
                         
     startingMap.printMap()
@@ -198,15 +206,23 @@ class WorldMap:
                 printRow.append(self.worldSquares[x][y].printBombs())
             print printRow
 
+    def printBatteriesMap(self):
+        for y in range(self.rows):
+            printRow = []
+            for x in range(self.cols):
+                printRow.append(self.worldSquares[x][y].printBatteries())
+            print printRow
+
     def mapSize(self):
         size = self.rows*self.cols
         analysis(size)
 
     def removeBat(self, loc):
         self.worldSquares[loc[0]][loc[1]].removeBattery()
+        # update neighboring adjacencies
         neighbors = self.getNeighbors(loc)
-        for n in range(len(neighbors)):
-            neighbors[n].removeAdjBat
+        for n in neighbors:
+            n.removeAdjBat()
 
     # find all neighbors within the map
     def getNeighbors(self, loc):    
@@ -235,9 +251,6 @@ class WorldSquare:
         self.bomb = bomb 
         self.battery = battery # 0 if no battery, integer for amount of charge
 
-    def removeBattery(self):
-        self.battery = False
-
     def removeAdjBat(self):
         if self.adjBats > 0:
             self.adjBats -= 1
@@ -254,14 +267,23 @@ class WorldSquare:
     def removeBomb(self):
         self.bomb = False
 
-    def placeBat(self):
+    def removeBattery(self):
         self.battery = 0
+
+    def placeBat(self, val):
+        self.battery = val
 
     def printBombs(self):
         if self.bomb:
             return 'B'
         else:
             return str(self.adjBombs)
+
+    def printBatteries(self):
+        if self.battery:
+            return 'E'
+        else:
+            return str(self.adjBats)
 
     def __str__(self):
         return "%d, %d, %d, %d" % (self.adjBombs, self.adjBats, self.bomb, self.battery)
@@ -278,7 +300,7 @@ def main():
         worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
     solve(worldMap)
     
-sys.argv = ['minesweeper.py', 12, 12, 3, 10]
+sys.argv = ['minesweeper.py', 6, 6, 5, 10]
 
 if __name__ == "__main__":
     main()

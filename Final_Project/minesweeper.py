@@ -66,9 +66,33 @@ def makeMap(rows, cols, numBats, numBombs):
     startingLoc = [randint(0, cols-1), randint(0, rows-1)]
 
     # List to hold all of the world map pieces
-    world_map = [[WorldSquare([x, y],0,0,True,0) for y in range(rows)] for x in range(cols)]
+    world_map = [[WorldSquare([x, y],0,0,False,0) for y in range(rows)] for x in range(cols)]
+
+
+    # Place numBombs number of bombs randomly
+    for i in range(numBombs):
+        bomb_x = randint(0, cols - 1)
+        bomb_y = randint(0, rows - 1)       
+
+        # Bombs cannot be placed in squares bordering the starting location
+        while (abs(startingLoc[0] - bomb_x) <= 1 and abs(startingLoc[1] - bomb_y) <= 1) or world_map[bomb_x][bomb_y].bomb:
+            bomb_x = randint(0, cols - 1)
+            bomb_y = randint(0, rows - 1)
+
+        world_map[bomb_x][bomb_y].placeBomb() # Add bomb
+        print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
+
+    print "done"
+
+    # Place numBatteries number of batteries randomly
+    for i in range(numBats):
+        bat_x = randint(0, cols - 1)
+        bat_y = randint(0, rows - 1)       
+
+        world_map[bat_x][bat_y].placeBat() # Add bomb
+        print "Bat location: (%d, %d)" % (bat_x, bat_y)
     
-    # Calculate the number of safe squares needed
+    '''# Calculate the number of safe squares needed
     safeSum = rows*cols - numBombs
     safeCount = 0
 
@@ -114,10 +138,10 @@ def makeMap(rows, cols, numBats, numBombs):
                 world_map[next_x][next_y].removeBomb()
                 safeCount += 1
                 fringe_x.append(next_x)
-                fringe_y.append(next_y)
+                fringe_y.append(next_y)'''
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
-     # update adjacent bomb counts
+     # update adjacent bomb and battery counts
     for r in range(rows):
         for c in range(cols):
             if world_map[c][r].bomb:
@@ -125,11 +149,81 @@ def makeMap(rows, cols, numBats, numBombs):
                 for neighbor in neighbors:
                     if not neighbor.bomb:
                         neighbor.addAdjBomb()
-    startingMap.printMap()
+            if world_map[c][r].battery:
+                neighbors = startingMap.getNeighbors([c, r])
+                for neighbor in neighbors:
+                    if not neighbor.battery:
+                        neighbor.addAdjBat()
 
-    analysis("Safe squares = " + str(safeCount))
+                        
+    startingMap.printMap()
     analysis("Numb bombs = " + str(numBombs))
     return startingMap
+
+# Determines if there are any unexplorable areas
+# Returns true if not valid, false if valid map
+def checkMap(worldMap):
+
+    # Make 2d list to indicate if square is checked or not
+    checked = []
+    for j in range(worldMap.cols):
+        col = []
+        for k in range(worldMap.rows):
+            col.append(0)
+        checked.append(col)
+
+    # Find a random non bomb starting location
+    curr_x = randint(0, worldMap.cols - 1)
+    curr_y = randint(0, worldMap.rows - 1)
+    while worldMap.worldSquares[curr_x][curr_y].bomb:
+        curr_x = randint(0, worldMap.cols - 1)
+        curr_y = randint(0, worldMap.rows - 1)
+
+    fringe = []
+    location = [curr_x, curr_y]
+    fringe.append(location)
+        
+    # Add unchecked non bomb to fringe and explore that node
+    while fringe:
+        
+        # Update curr_x and curr_y
+        curr_x = fringe[0][0]
+        curr_y = fringe[0][1]
+        location = [curr_x, curr_y]
+        # Get Neighbors and add non-bombs to checked list
+        neighbors = worldMap.getNeighbors(location)
+        # Loop through list of neighbors checking non bomb squares
+        for n in range(len(neighbors)):
+            next_x = neighbors[n].loc[0]
+            next_y = neighbors[n].loc[1]
+            # Ensure that the site is not a bomb
+            if not worldMap.worldSquares[next_x][next_y].bomb:
+                if not checked[next_x][next_y]:
+                    checked[next_x][next_y] = 1
+                    fringe.append([next_x, next_y])
+
+        # Remove current x and y from fringe
+        fringe.pop(0)
+
+        
+    # Determine if all safe squares have been found
+    safeSum = worldMap.cols * worldMap.rows - worldMap.numBombs
+    safeCount = 0
+    for x in range(worldMap.cols):
+        for y in range(worldMap.rows):
+            if(checked[x][y]):
+                safeCount = safeCount + 1
+
+    if safeCount == safeSum:
+        print "Valid Map"
+        print "safe sum: ", safeSum
+        print "safe count: ", safeCount
+        return False # Valid map
+    else:
+        print "Not Valid Map"
+        print "safe sum: ", safeSum
+        print "safe count: ", safeCount
+        return True # Not valid map
 
 
 # Class to hold all of the pieces of the world map
@@ -226,6 +320,8 @@ def main():
     numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+    while(checkMap(worldMap)):
+        worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
     solve(worldMap)
     
 sys.argv = ['minesweeper.py', 8, 8, 3, 10]

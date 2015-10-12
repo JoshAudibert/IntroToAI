@@ -19,7 +19,8 @@ def solve(worldMap):
     while bot_running:
         # ask robot where it wants to move
         move_to = m_robot.chooseNextLocation().loc
-        print "Move to:", move_to
+        debug("Move to: ")
+        debug(move_to)
         # tell robot what happens when it moves to its new location
         move_square = worldMap.getSquare(move_to)
         m_robot.move(move_square)
@@ -83,9 +84,7 @@ def makeMap(rows, cols, numBats, numBombs):
             bomb_y = randint(0, rows - 1)
 
         world_map[bomb_x][bomb_y].placeBomb() # Add bomb
-        print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
-
-    print "done"
+        #print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
 
     # Place numBatteries number of batteries randomly
     for i in range(numBats):
@@ -93,7 +92,8 @@ def makeMap(rows, cols, numBats, numBombs):
         bat_y = randint(0, rows - 1)       
 
         world_map[bat_x][bat_y].placeBat() # Add bomb
-        print "Bat location: (%d, %d)" % (bat_x, bat_y)
+
+        #print "Bat location: (%d, %d)" % (bat_x, bat_y)
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
      # update adjacent bomb and battery counts
@@ -279,6 +279,7 @@ def main():
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
     while(checkMap(worldMap)):
         worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+    print "found valid map"
     solve(worldMap)
     
 sys.argv = ['minesweeper.py', 12, 12, 3, 10]

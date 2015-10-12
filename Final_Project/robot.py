@@ -214,6 +214,7 @@ class Robot:
 
     def chooseNextLocation(self):
         #self.battery = 1000
+
         sortedFringe = sorted(self.robotMap.fringe, key=self.utilityFn, reverse=True)
         for fringe_square in sortedFringe:
             pathCost = self.findPath(fringe_square)

@@ -167,7 +167,7 @@ class Robot:
         # get list of neighboring RobotSquares
         for neighbor in neighbors:
             # add all the explored neighbors to the frontier as SearchNodes
-            if neighbor.checked or (neighbor.loc[0] == goal.loc[0] and neighbor.loc[1] == goal.loc[1]):
+            if neighbor.checked or neighbor.loc == goal.loc:
                 neighborDist = sqrt(pow((goal.loc[0] - neighbor.loc[0]), 2) + pow((goal.loc[1] - neighbor.loc[1]), 2))
                 frontier.append(self.SearchNode(neighbor.loc, neighborDist, 1))
         
@@ -180,7 +180,7 @@ class Robot:
             neighbors = self.robotMap.getNeighbors(node.loc)
             for neighbor in neighbors:
                 # add all explored neighbors to the frontier as SearchNodes
-                if(neighbor.checked or (neighbor.loc[0] == goal.loc[0] and neighbor.loc[1] == goal.loc[1])):
+                if neighbor.checked or neighbor.loc == goal.loc:
                     neighborDist = sqrt(pow((goal.loc[0] - neighbor.loc[0]), 2) + pow((goal.loc[1] - neighbor.loc[1]), 2))
                     neighborCost = node.cost + 1
                     frontier.append(self.SearchNode(neighbor.loc, neighborDist, neighborCost))
@@ -199,7 +199,7 @@ class Robot:
         # useBattery = True
         self.battery = 1000
         if useBattery:
-            sortedFringe = sorted(self.robotMap.fringe, key=self.utilityFn)
+            sortedFringe = sorted(self.robotMap.fringe, key=self.utilityFn, reverse=True)
             destinationPicked = False
             for fringe_square in sortedFringe:
                 pathCost = self.findPath(fringe_square)
@@ -230,50 +230,29 @@ class Robot:
         useBattery = True
         
         if useBattery:
-            if(world_square.loc == self.loc):
-                self.loc = world_square.loc
-                # search location
-                # update RobotSquare
-                if world_square.bomb:
-                    self.explode()
-                    return
-                self.robotMap.getSquare(self.loc).setChecked()
-                # add WorldSquare to checkedSquares
-                self.robotMap.checkedSquares.append(world_square)
-                # remove current location from fringe
-                self.robotMap.fringe.remove(self.robotMap.getSquare(self.loc))
-                # add neighbors of current location to fringe
-                self.robotMap.updateProbabilities(world_square)
-                neighbors = self.robotMap.getNeighbors(self.loc)
-                for neighbor in neighbors:
-                    if not neighbor.checked and not neighbor.flagged and neighbor not in self.robotMap.fringe:
-                        self.robotMap.fringe.append(neighbor)
-                debug("Fringe:")
-                for square in self.robotMap.fringe:
-                    debug(square)
-            else:
+            if(world_square.loc != self.loc):
                 path_len = self.findPath(world_square)
-                self.loc = world_square.loc
                 self.changeBattery(-path_len)
-                # search location
-                # update RobotSquare
-                if world_square.bomb:
-                    self.explode()
-                    return
-                self.robotMap.getSquare(self.loc).setChecked()
-                # add WorldSquare to checkedSquares
-                self.robotMap.checkedSquares.append(world_square)
-                # remove current location from fringe
-                self.robotMap.fringe.remove(self.robotMap.getSquare(self.loc))
-                # add neighbors of current location to fringe
-                self.robotMap.updateProbabilities(world_square)
-                neighbors = self.robotMap.getNeighbors(self.loc)
-                for neighbor in neighbors:
-                    if not neighbor.checked and not neighbor.flagged and neighbor not in self.robotMap.fringe:
-                        self.robotMap.fringe.append(neighbor)
-                debug("Fringe:")
-                for square in self.robotMap.fringe:
-                    debug(square)
+            self.loc = world_square.loc
+            # search location
+            # update RobotSquare
+            if world_square.bomb:
+                self.explode()
+                return
+            self.robotMap.getSquare(self.loc).setChecked()
+            # add WorldSquare to checkedSquares
+            self.robotMap.checkedSquares.append(world_square)
+            # remove current location from fringe
+            self.robotMap.fringe.remove(self.robotMap.getSquare(self.loc))
+            # add neighbors of current location to fringe
+            self.robotMap.updateProbabilities(world_square)
+            neighbors = self.robotMap.getNeighbors(self.loc)
+            for neighbor in neighbors:
+                if not neighbor.checked and not neighbor.flagged and neighbor not in self.robotMap.fringe:
+                    self.robotMap.fringe.append(neighbor)
+            debug("Fringe:")
+            for square in self.robotMap.fringe:
+                debug(square)
         else:
             self.loc = world_square.loc
             # search location

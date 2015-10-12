@@ -26,14 +26,25 @@ def solve(worldMap):
         if m_robot.isDead or len(m_robot.robotMap.fringe) == 0:
             # break loop
             bot_running = False
-        
-    if m_robot.isDead:
-        print "THE ROBOT EXPLODED AT LOCATION %s!" % str(move_to)
+    
+    printAnalysis(m_robot, worldMap)
+
+# return / print statistics of robot performance
+def printAnalysis(robot, worldMap):
+    numTotalSafeSquares = (worldMap.rows * worldMap.cols) - worldMap.numBombs
+    numCheckedSquares = len(robot.robotMap.checkedSquares)
+
+    if robot.isDead:
+        print "The robot searched %s/%s safe squares" % (str(numCheckedSquares-1), str(numTotalSafeSquares))
+        if robot.battery:
+            print "THE ROBOT EXPLODED AT LOCATION %s!" % str(robot.loc)
+        else:
+            print "THE ROBOT RAN OUT OF BATTERY AT LOCATION %s" % str(robot.loc)
     else:
         print "THE ROBOT RAN OUT OF FRINGE"
+
     print "***Actual World Map:"
     worldMap.printMap()
-    # return / print statistics of robot performance
 
 
 def makeMap(rows, cols, numBats, numBombs):
@@ -113,35 +124,9 @@ def makeMap(rows, cols, numBats, numBombs):
                         neighbor.addAdjBomb()
     startingMap.printMap()
 
-    analysis("Safe squares =" + safeCount)
-    analysis("Numb bombs =" + numBombs)
+    analysis("Safe squares = " + str(safeCount))
+    analysis("Numb bombs = " + str(numBombs))
     return startingMap
-
-
-# Checks map to ensure there are no closed off areas
-def checkMapLegality(world_map):
-    
-    # DFS to add all non walled neighbors to list then do the same for their neighbors
-    # If not on list- regenerate map
-    '''
-    cols = len(world_map);
-    rows = len(world_map[0]);
-
-    # Make empty list of same size as the world map
-    check_map = []
-    for j in range(cols):
-        col = []
-        for k in range(rows):
-            col.append(0)
-        check_map.append(col)
-
-    # Move from one corner to the other
-    curr_x = 0;
-    curr_y = 0;
-    goal_x = cols; 
-    goal_y = rows;
-    '''
-    pass
 
 
 # Class to hold all of the pieces of the world map
@@ -160,7 +145,7 @@ class WorldMap:
             printRow = []
             for x in range(self.cols):
                 printRow.append(self.worldSquares[x][y].printBombs())
-            debug(printRow)
+            print printRow
 
     def removeBat(self, loc):
         self.worldSquares[loc[0]][loc[1]].removeBattery()

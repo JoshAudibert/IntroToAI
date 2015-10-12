@@ -196,7 +196,9 @@ class Robot:
             for neighbor in neighbors:
                 # add all explored neighbors to the frontier as SearchNodes
                 if neighbor.checked or neighbor.loc == goal.loc:
-                    neighborDist = sqrt(pow((goal.loc[0] - neighbor.loc[0]), 2) + pow((goal.loc[1] - neighbor.loc[1]), 2))
+                    deltaX = abs(goal.loc[0] - neighbor.loc[0])
+                    deltaY = abs(goal.loc[1] - neighbor.loc[1])
+                    neighborDist = max(deltaX, deltaY)
                     neighborCost = node.cost + 1
                     frontier.append(self.SearchNode(neighbor.loc, neighborDist, neighborCost))
                 frontier.sort(key=self.frontierSort)
@@ -204,7 +206,7 @@ class Robot:
         return frontier[0].cost
         
     def utilityFn(self, botSquare):
-        distance = sqrt(pow((self.loc[0] - botSquare.loc[0]), 2) + pow((self.loc[1] - botSquare.loc[1]), 2))
+        distance = max(abs(self.loc[0] - botSquare.loc[0]), abs(self.loc[1] - botSquare.loc[1]))
         bombProb = botSquare.probBomb;
         batProb = botSquare.probBat
         return 1.0 - bombProb
@@ -242,10 +244,11 @@ class Robot:
         # update fringe
         
         global useBattery
-        useBattery = False
+        useBattery = True
         
         if useBattery:
             if(world_square.loc != self.loc):
+                # if not initialization, calculate battery usage
                 path_len = self.findPath(world_square)
                 self.changeBattery(-path_len)
             self.loc = world_square.loc

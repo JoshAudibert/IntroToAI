@@ -21,9 +21,12 @@ def solve(worldMap):
         move_to = m_robot.chooseNextLocation().loc
         print "Move to:", move_to
         # tell robot what happens when it moves to its new location
-        m_robot.move(worldMap.getSquare(move_to))
+        move_square = worldMap.getSquare(move_to)
+        m_robot.move(move_square)
+        if move_square.battery:
+            worldMap.removeBat(move_to)
         # check if the robot is dead or done exploring
-        if m_robot.isDead or len(m_robot.robotMap.fringe) == 0:
+        if m_robot.isDead or len(m_robot.robotMap.fringe) == 0 or m_robot.cantTouchThis():
             # break loop
             bot_running = False
     
@@ -236,7 +239,7 @@ class WorldSquare:
         self.battery = battery # 0 if no battery, integer for amount of charge
 
     def removeBattery(self):
-        self.battery = False
+        self.battery = 0
 
     def removeAdjBat(self):
         if self.adjBats > 0:

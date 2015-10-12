@@ -56,12 +56,12 @@ def makeMap(rows, cols, numBats, numBombs):
     world_map = []
 
     # Neighboring Coordinates
-    numNeighbors = 8
     # (-1,-1) (0,-1) (1,-1)
     # (-1, 0) robot  (1, 0)
     # (-1, 1) (0, 1) (1, 1)
     adj_x = [-1,0,1,-1,1,-1,0,1]
     adj_y = [-1,-1,-1,0,0,1,1,1]
+    numNeighbors = len(adj_x)
 
     # Randomly pick a starting location for the robot
     startingLoc = [randint(0, cols-1), randint(0, rows-1)]
@@ -89,55 +89,8 @@ def makeMap(rows, cols, numBats, numBombs):
         bat_y = randint(0, rows - 1)       
 
         world_map[bat_x][bat_y].placeBat() # Add bomb
+
         #print "Bat location: (%d, %d)" % (bat_x, bat_y)
-    
-    '''# Calculate the number of safe squares needed
-    safeSum = rows*cols - numBombs
-    safeCount = 0
-
-    # Ensure that the starting location is not a bomb
-    world_map[startingLoc[0]][startingLoc[1]].removeBomb()
-    safeCount += 1
-
-    # Keep track of all coordinates of items in the fringe
-    fringe_x = []
-    fringe_y = []
-
-    # Make all 9 squares bordering start safe
-    for neighbor in range(numNeighbors):
-        next_x = startingLoc[0] + adj_x[neighbor]
-        next_y = startingLoc[1] + adj_y[neighbor]
-        # Check that neighbor is in room
-        if 0 <= next_x < cols and 0 <= next_y < rows:
-            # Check that neighbor is not safe already
-            if world_map[next_x][next_y].bomb:
-                world_map[next_x][next_y].removeBomb()
-                safeCount += 1
-                fringe_x.append(next_x)
-                fringe_y.append(next_y)
-
-    # Move from start randomly until all safe squares are placed
-    curr_x = startingLoc[0]
-    curr_y = startingLoc[1]
-
-    # Keep going until all safe squares are placed
-    while safeCount != safeSum:
-        # Randomly pick a square from the fringe
-        nextStep = randint(0,len(fringe_x) - 1)
-        curr_x = fringe_x[nextStep]
-        curr_y = fringe_y[nextStep]
-        # Randomly pick a direction to move in
-        direction = randint(0,7)
-        next_x = curr_x + adj_x[direction]
-        next_y = curr_y + adj_y[direction]
-        # Check that neighbor is in room
-        if 0 <= next_x < cols and 0 <= next_y < rows:
-            # Check that neighbor is not safe already
-            if world_map[next_x][next_y].bomb:
-                world_map[next_x][next_y].removeBomb()
-                safeCount += 1
-                fringe_x.append(next_x)
-                fringe_y.append(next_y)'''
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
      # update adjacent bomb and battery counts
@@ -171,12 +124,14 @@ def checkMap(worldMap):
             col.append(0)
         checked.append(col)
 
-    # Find a random non bomb starting location
-    curr_x = randint(0, worldMap.cols - 1)
-    curr_y = randint(0, worldMap.rows - 1)
-    while worldMap.worldSquares[curr_x][curr_y].bomb:
-        curr_x = randint(0, worldMap.cols - 1)
-        curr_y = randint(0, worldMap.rows - 1)
+    # Find an arbitrary non bomb starting location
+    curr_x = 0
+    curr_y = 0
+    for x in range(worldMap.cols):
+        for y in range(worldMap.rows):
+            curr_x, curr_y = x, y
+            if not worldMap.worldSquares[curr_x][curr_y].bomb:
+                break
 
     fringe = []
     location = [curr_x, curr_y]
@@ -324,7 +279,7 @@ def main():
     print "found valid map"
     solve(worldMap)
     
-sys.argv = ['minesweeper.py', 16, 16, 3, 100]
+sys.argv = ['minesweeper.py', 12, 12, 3, 10]
 
 if __name__ == "__main__":
     main()

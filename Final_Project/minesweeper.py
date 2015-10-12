@@ -220,13 +220,12 @@ class WorldSquare:
 
 
 def main():
-    # Command line format: minesweeper.py puzzleHeight puzzleWidth bumbBatteries numBombs
+    # Command line format: minesweeper.py puzzleHeight puzzleWidth numBatteries numBombs
     puzzleHeight = int(sys.argv[1])
     puzzleWidth = int(sys.argv[2])
     numBatteries = int(sys.argv[3])
     numBombs = int(sys.argv[4])
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
-    # move to lowest probability of a bomb in fringe break ties  sort list
     solve(worldMap)
     
 sys.argv = ['minesweeper.py', 8, 8, 3, 10]

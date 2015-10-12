@@ -19,7 +19,8 @@ def solve(worldMap):
     while bot_running:
         # ask robot where it wants to move
         move_to = m_robot.chooseNextLocation().loc
-        print "Move to:", move_to
+        debug("Move to: ")
+        debug(move_to)
         # tell robot what happens when it moves to its new location
         m_robot.move(worldMap.getSquare(move_to))
         # check if the robot is dead or done exploring
@@ -80,9 +81,7 @@ def makeMap(rows, cols, numBats, numBombs):
             bomb_y = randint(0, rows - 1)
 
         world_map[bomb_x][bomb_y].placeBomb() # Add bomb
-        print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
-
-    print "done"
+        #print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
 
     # Place numBatteries number of batteries randomly
     for i in range(numBats):
@@ -90,7 +89,7 @@ def makeMap(rows, cols, numBats, numBombs):
         bat_y = randint(0, rows - 1)       
 
         world_map[bat_x][bat_y].placeBat() # Add bomb
-        print "Bat location: (%d, %d)" % (bat_x, bat_y)
+        #print "Bat location: (%d, %d)" % (bat_x, bat_y)
     
     '''# Calculate the number of safe squares needed
     safeSum = rows*cols - numBombs
@@ -322,9 +321,10 @@ def main():
     worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
     while(checkMap(worldMap)):
         worldMap = makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
+    print "found valid map"
     solve(worldMap)
     
-sys.argv = ['minesweeper.py', 8, 8, 3, 10]
+sys.argv = ['minesweeper.py', 16, 16, 3, 100]
 
 if __name__ == "__main__":
     main()

@@ -214,6 +214,7 @@ class Robot:
     def chooseNextLocation(self):
         global useBattery
         # useBattery = True
+        useBattery = False
         self.battery = 1000
         if useBattery:
             sortedFringe = sorted(self.robotMap.fringe, key=self.utilityFn, reverse=True)

@@ -5,6 +5,7 @@ import time
 import sys
 from util import debug
 from math import sqrt
+from util import analysis
 
 class RobotSquare:
     def __init__(self, location, flagged, probBomb, probBat, checked):

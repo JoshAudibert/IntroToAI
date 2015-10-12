@@ -11,11 +11,13 @@ def main():
         numBatteries = 10
         puzzleWidth = 9
         puzzleHeight = 9
+
     if medium:
         numBombs = 40
         numBatteries = 10
         puzzleWidth = 16
         puzzleHeight = 16
+
     if hard:
         numBombs = 99
         numBatteries = 10
@@ -30,4 +32,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-    

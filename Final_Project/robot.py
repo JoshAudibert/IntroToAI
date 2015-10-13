@@ -157,7 +157,7 @@ class RobotMap:
                 for row in self.batteryStates[state_i]:
                     newRow = list(row)
                     newBatteryState.append(newRow)
-                newBatteryState[newSquare.loc[0]][newSquare.loc[1]] = True
+                newBatteryState[neighbor.loc[0]][neighbor.loc[1]] = True
                 self.batteryStates.append(newBatteryState)
         # Remove invalid current batteryStates
         self.batteryStates[:] = [state for state in self.batteryStates if self.isValidBatteryState(state)]
@@ -206,7 +206,10 @@ class RobotMap:
                     fringeBatteryCounts[sqr_i] += 1
         # update probabilities accordingly
         for sqr_i in range(len(self.fringe)):
-            self.fringe[sqr_i].probBat = float(fringeBatteryCounts[sqr_i])/len(self.batteryStates)
+            if len(self.batteryStates) > 0:
+                self.fringe[sqr_i].probBat = float(fringeBatteryCounts[sqr_i])/len(self.batteryStates)
+            else:
+                self.fringe[sqr_i].probBat = 0
 
         # flag squares with probability of 1, and remove them from the fringe
         for row in self.robotSquares:
@@ -274,7 +277,7 @@ class Robot:
         distance = max(abs(self.loc[0] - botSquare.loc[0]), abs(self.loc[1] - botSquare.loc[1]))
         bombProb = botSquare.probBomb
         batProb = botSquare.probBat
-        return (1.0 - bombProb) + (1.0 - float(distance)/self.battery)
+        return (1.0 - bombProb)
 
     def chooseNextLocation(self):
         #self.battery = 1000

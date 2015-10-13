@@ -9,7 +9,7 @@ from util import analysis
 
 def solve(worldMap):
     # Make instance of robot
-    initialBattery = 20
+    initialBattery = 50
     m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols)
     # tell robot about world map info of its starting location
     m_robot.move(worldMap.getStartingSquare())

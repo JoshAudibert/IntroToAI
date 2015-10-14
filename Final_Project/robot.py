@@ -241,11 +241,14 @@ class RobotMap:
 
 
 class Robot:
-    def __init__(self, initialBattery, location, rows, cols):
+    def __init__(self, initialBattery, location, rows, cols, bomb_weight, battery_weight, distance_weight):
         self.battery = initialBattery
         self.loc = location # [0] is x, [1] is y (namedtuple?)
         self.isDead = False
         self.robotMap = RobotMap(location, rows, cols)
+        self.bomb_weight = bomb_weight
+        self.battery_weight = battery_weight
+        self.distance_weight = distance_weight
         
     def changeBattery(self, difference):
         self.battery += difference
@@ -295,7 +298,7 @@ class Robot:
         distance = max(abs(self.loc[0] - botSquare.loc[0]), abs(self.loc[1] - botSquare.loc[1]))
         bombProb = botSquare.probBomb
         batProb = botSquare.probBat
-        return (1.0 - bombProb)
+        return self.bomb_weight * (1.0 - bombProb) + self.battery_weight * batProb + self.distance_weight*(1.0 - float(distance)/self.battery)
 
     def chooseNextLocation(self):
         #self.battery = 1000

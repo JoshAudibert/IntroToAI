@@ -9,8 +9,8 @@ from util import analysis
 
 def solve(worldMap):
     # Make instance of robot
-    initialBattery = 50
-    m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols)
+    initialBattery = 20
+    m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols, 6, 2, 4)
     if worldMap.getStartingSquare().battery:
         #import ipdb; ipdb.set_trace()
         m_robot.changeBattery(worldMap.getStartingSquare().battery)

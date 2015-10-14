@@ -102,12 +102,22 @@ def makeMap(rows, cols, numBats, numBombs):
         #print "Bomb location: (%d, %d)" % (bomb_x, bomb_y)
 
     # Place numBatteries number of batteries randomly
-    for i in range(numBats):
+    batsPlaced = 0
+    while batsPlaced < numBats:
         bat_x = randint(0, cols - 1)
         bat_y = randint(0, rows - 1)       
 
-        world_map[bat_x][bat_y].placeBat(randint(2, 5)) # Add battery
-        print "Bat location: (%d, %d)" % (bat_x, bat_y)
+        if not (bat_x == startingLoc[0] and bat_y == startingLoc[1]):
+            world_map[bat_x][bat_y].placeBat(randint(2, 5)) # Add battery
+            print "Bat location: (%d, %d)" % (bat_x, bat_y)
+            batsPlaced += 1
+        
+#    for i in range(numBats):
+#        bat_x = randint(0, cols - 1)
+#        bat_y = randint(0, rows - 1)       
+#
+#        world_map[bat_x][bat_y].placeBat(randint(2, 5)) # Add battery
+#        print "Bat location: (%d, %d)" % (bat_x, bat_y)
 
     startingMap = WorldMap(world_map, startingLoc, numBombs, numBats, rows, cols)
      # update adjacent bomb and battery counts

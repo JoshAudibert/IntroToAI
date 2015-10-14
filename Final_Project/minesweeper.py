@@ -10,7 +10,10 @@ from util import analysis
 def solve(worldMap):
     # Make instance of robot
     initialBattery = 20
-    m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols, 6, 2, 4)
+    bombWeight = 6
+    batteryWeight = 4
+    distanceWeight = 10
+    m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols, bombWeight, batteryWeight, distanceWeight)
     if worldMap.getStartingSquare().battery:
         #import ipdb; ipdb.set_trace()
         m_robot.changeBattery(worldMap.getStartingSquare().battery)

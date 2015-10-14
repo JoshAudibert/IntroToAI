@@ -14,9 +14,7 @@ class RobotSquare:
         self.probBomb = probBomb
         self.probBat = probBat
         self.checked = checked
-        self.adjBombs = 0
-        self.adjBats = 0
-        
+
     def flag(self):
         self.flagged = True
 
@@ -30,7 +28,7 @@ class RobotSquare:
         self.probBat = probability
 
     def __str__(self):
-        return "%s, %d, %d, %d" % (self.loc, self.flagged, self.adjBombs, self.adjBats)
+        return "%s" % (self.loc)
 
     def __eq__(self, other):
         return self.loc == other.loc
@@ -63,6 +61,13 @@ class RobotMap:
                 printRow.append(val)
             print printRow
 
+    def printBatAdjMap(self):
+        for y in range(self.rows):
+            printRow = []
+            for x in range(self.cols):
+                printRow.append(self.robotSquares[x][y].adjBats)
+            print printRow
+
     def printBombStates(self):
         for i in range(len(self.bombStates)):
             debug("***Bomb State #" + str(i))
@@ -78,7 +83,7 @@ class RobotMap:
             for y in range(len(self.batteryStates[i])):
                 p = []
                 for x in range(len(self.batteryStates[i][0])):
-                    p.append(self.batteryStates[i][x][y])
+                    p.append(int(self.batteryStates[i][x][y]))
                 debug(p)
 
     def printBombProbabilities(self):
@@ -149,15 +154,15 @@ class RobotMap:
         self.bombStates[:] = [state for state in self.bombStates if self.isValidBombState(state)]
 
     # Updates self.batteryStates to reflect gained information from addedLoc
-    def updateBatteryStates(self, neighbors):
-        for neighbor in neighbors:
+    def updateBatteryStates(self, newAdjUnsearched):
+        for newSquare in newAdjUnsearched:
             # Add new batteryStates
             for state_i in range(len(self.batteryStates)):
                 newBatteryState = []
                 for row in self.batteryStates[state_i]:
                     newRow = list(row)
                     newBatteryState.append(newRow)
-                newBatteryState[neighbor.loc[0]][neighbor.loc[1]] = True
+                newBatteryState[newSquare.loc[0]][newSquare.loc[1]] = True
                 self.batteryStates.append(newBatteryState)
         # Remove invalid current batteryStates
         self.batteryStates[:] = [state for state in self.batteryStates if self.isValidBatteryState(state)]
@@ -168,6 +173,12 @@ class RobotMap:
         # else:
         #     self.batteryStates[:] = [state for state in self.batteryStates if self.isValidBatteryState(state)]
 
+    # filters/updates the battery states given the location that a battery was just removed from
+    def filterBatteryStates(self, loc):
+        # search for all batteryStates where loc is True, throw out rest
+        self.batteryStates[:] = [state for state in self.batteryStates if state[loc[0]][loc[1]]]
+        for state in self.batteryStates:
+            state[loc[0]][loc[1]] = False
 
     # Update the probBombs of each RobotSquare in the fringe based on new info gained
     # at addedLoc
@@ -180,7 +191,7 @@ class RobotMap:
                 newAdjUnsearched.append(neighbor)
 
         self.updateBombStates(newAdjUnsearched)
-        self.updateBatteryStates(neighbors)
+        self.updateBatteryStates(newAdjUnsearched)
         #self.printBombStates()
         self.printBatteryStates()
 
@@ -198,18 +209,25 @@ class RobotMap:
 
         # go through BATTERY states and count how many times a battery is in each fringe square
         fringeBatteryCounts = [0] * len(self.fringe)
+        checkedBatteryCounts = [0] * len(self.checkedSquares)
         for batteryState in self.batteryStates:
             for sqr_i in range(len(self.fringe)):
                 loc = self.fringe[sqr_i].loc
                 if batteryState[loc[0]][loc[1]]:
                     # battery here in this fringe square in this batteryState
                     fringeBatteryCounts[sqr_i] += 1
+            for sqr_i in range(len(self.checkedSquares)):
+                loc = self.checkedSquares[sqr_i].loc
+                if batteryState[loc[0]][loc[1]]:
+                    # battery here in this checked square in this batteryState
+                    checkedBatteryCounts[sqr_i] += 1
+
         # update probabilities accordingly
         for sqr_i in range(len(self.fringe)):
-            if len(self.batteryStates) > 0:
-                self.fringe[sqr_i].probBat = float(fringeBatteryCounts[sqr_i])/len(self.batteryStates)
-            else:
-                self.fringe[sqr_i].probBat = 0
+            self.fringe[sqr_i].probBat = float(fringeBatteryCounts[sqr_i])/len(self.batteryStates)
+        for sqr_i in range(len(self.checkedSquares)):
+            sqr = self.checkedSquares[sqr_i]
+            self.robotSquares[sqr.loc[0]][sqr.loc[1]].probBat = float(checkedBatteryCounts[sqr_i])/len(self.batteryStates)
 
         # flag squares with probability of 1, and remove them from the fringe
         for row in self.robotSquares:
@@ -300,21 +318,13 @@ class Robot:
         if world_square.bomb or self.battery == 0:
             self.explode()
             return
+
         # found a battery! Update the current bombStates
         if world_square.battery:
-            # if the battery probability was 1, change to False
-            # otherwise, remove the ones where it was True
-            print "num batstates before:", len(self.robotMap.batteryStates)
-            if self.robotMap.getSquare(self.loc).probBat == 1:
-                for state in self.robotMap.batteryStates:
-                    state[self.loc[0]][self.loc[1]] = False
-            else:
-                for state in self.robotMap.batteryStates:
-                    if state[self.loc[0]][self.loc[1]] == True:
-                        self.robotMap.batteryStates.remove(state)
-            print "num batstates after:", len(self.robotMap.batteryStates)
-            # set new probability to zero
-            self.robotMap.getSquare(self.loc).probBat = 0
+            # update robot map and checkedSquares
+            print "SHOULDN'T GET HERE"
+            self.robotMap.removeBat(self.loc)
+            self.robotMap.filterBatteryStates(self.loc)
 
         self.robotMap.getSquare(self.loc).setChecked()
         # add WorldSquare to checkedSquares

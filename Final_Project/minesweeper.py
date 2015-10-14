@@ -11,6 +11,12 @@ def solve(worldMap):
     # Make instance of robot
     initialBattery = 50
     m_robot = Robot(initialBattery, worldMap.getStartingSquare().loc, worldMap.rows, worldMap.cols)
+    if worldMap.getStartingSquare().battery:
+        #import ipdb; ipdb.set_trace()
+        m_robot.changeBattery(worldMap.getStartingSquare().battery)
+        worldMap.removeBat(worldMap.getStartingSquare().loc)
+        #m_robot.robotMap.removeBat(m_robot.loc)
+        m_robot.robotMap.filterBatteryStates(m_robot.loc)
     # tell robot about world map info of its starting location
     m_robot.move(worldMap.getStartingSquare())
     
@@ -23,12 +29,15 @@ def solve(worldMap):
         # ask robot where it wants to move
         move_to = m_robot.chooseNextLocation().loc
         world_square = worldMap.getSquare(move_to)
-	debug("Move to: ")
-	debug(move_to)
+        debug("Move to: ")
+        debug(move_to)
         # update world battery counts and removed a battery if necessary
         if world_square.battery:
             m_robot.changeBattery(world_square.battery)
             worldMap.removeBat(move_to)
+            #import ipdb; ipdb.set_trace()
+            #m_robot.robotMap.removeBat(m_robot.loc)
+            m_robot.robotMap.filterBatteryStates(move_to)
         # tell robot what happens when it moves to its new location
         m_robot.move(world_square)
         # check if the robot is dead or done exploring
@@ -303,7 +312,7 @@ def main():
     print "found valid map"
     solve(worldMap)
     
-sys.argv = ['minesweeper.py', 6, 6, 5, 10]
+sys.argv = ['minesweeper.py', 6, 6, 5, 6]
 
 if __name__ == "__main__":
     main()

@@ -108,7 +108,7 @@ def makeMap(rows, cols, numBats, numBombs):
         bat_y = randint(0, rows - 1)       
 
         if not (bat_x == startingLoc[0] and bat_y == startingLoc[1]):
-            world_map[bat_x][bat_y].placeBat(randint(2, 5)) # Add battery
+            world_map[bat_x][bat_y].placeBat(randint(5, 10)) # Add battery
             print "Bat location: (%d, %d)" % (bat_x, bat_y)
             batsPlaced += 1
         

@@ -2,9 +2,9 @@ import sys
 import minesweeper
 
 def main():
-    easy = False
+    easy = True
     medium = False
-    hard = True
+    hard = False
 
     if easy:
         numBombs = 10
@@ -24,7 +24,7 @@ def main():
         puzzleWidth = 14
         puzzleHeight = 14
 
-    for i in range(2):
+    for i in range(10):
         print "Test ", i
         worldMap = minesweeper.makeMap(puzzleHeight, puzzleWidth, numBatteries, numBombs)
         while(minesweeper.checkMap(worldMap)):
